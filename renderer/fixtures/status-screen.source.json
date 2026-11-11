@@ -1,0 +1,28 @@
+{
+  "_source": {
+    "file": "2026-11-04T03-00-16-127Z.json",
+    "model": "MiniMax-M3",
+    "scenario": "status-screen",
+    "tool": "show_info",
+    "args": {
+      "title": "Local Model Status",
+      "lines": [
+        "Model: Qwen 9B",
+        "Throughput: 53 tokens/s",
+        "GPU temperature: 71°C",
+        "Press Triangle to refresh stats"
+      ],
+      "status": {
+        "label": "Ready",
+        "state": "ready"
+      },
+      "hints": [
+        {
+          "button": "triangle",
+          "label": "Refresh",
+          "id": "refresh"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,837 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ps5-agentic-ui.local/catalogs/ps5/v1.json",
+  "catalogId": "https://ps5-agentic-ui.local/catalogs/ps5/v1.json",
+  "protocolVersion": "1.0",
+  "title": "PS5 native catalog (v1, draft)",
+  "description": "Components drawn natively by the PS5 renderer, operated with a DualSense controller from a couch, on a TV.",
+  "instructions": "Components drawn natively by the PS5 renderer, operated with a DualSense controller from a couch, on a TV. There is no mouse and no hover: one item has focus, the D-pad moves focus, Cross activates, Circle goes back. Prefer few, large, focusable items. Text entry always goes through TextPrompt (the system keyboard), confirmation through Confirm (a system dialog).",
+  "components": {
+    "Screen": {
+      "type": "object",
+      "properties": {
+        "component": {
+          "const": "Screen"
+        },
+        "title": {
+          "$ref": "common_types.json#/$defs/DynamicString",
+          "description": "Header title, top left."
+        },
+        "status": {
+          "$ref": "common_types.json#/$defs/Child",
+          "description": "Optional StatusChip shown in the header, top right."
+        },
+        "children": {
+          "$ref": "common_types.json#/$defs/ChildList",
+          "description": "Body, stacked vertically. Focus moves between children with Up/Down."
+        },
+        "hints": {
+          "$ref": "common_types.json#/$defs/Child",
+          "description": "Optional ButtonHints bar, bottom right. Circle always means Back unless the hints say otherwise."
+        }
+      },
+      "required": [
+        "component",
+        "title",
+        "children"
+      ]
+    },
+    "Pages": {
+      "type": "object",
+      "properties": {
+        "component": {
+          "const": "Pages"
+        },
+        "pages": {
+          "type": "array",
+          "minItems": 2,
+          "description": "Top-level sections switched with L1/R1, shown as a tab strip under the header.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "$ref": "common_types.json#/$defs/DynamicString"
+              },
+              "child": {
+                "$ref": "common_types.json#/$defs/Child"
+              }
+            },
+            "required": [
+              "title",
+              "child"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "component",
+        "pages"
+      ]
+    },
+    "Shelf": {
+      "type": "object",
+      "properties": {
+        "component": {
+          "const": "Shelf"
+        },
+        "title": {
+          "$ref": "common_types.json#/$defs/DynamicString",
+          "description": "Row label above the tiles."
+        },
+        "children": {
+          "$ref": "common_types.json#/$defs/ChildList",
+          "description": "Tile components in a horizontal row (home-screen style). Left/Right moves focus; the focused tile grows. Use a template to build tiles from a data list."
+        }
+      },
+      "required": [
+        "component",
+        "children"
+      ]
+    },
+    "Tile": {
+      "type": "object",
+      "properties": {
+        "component": {
+          "const": "Tile"
+        },
+        "title": {
+          "$ref": "common_types.json#/$defs/DynamicString"
+        },
+        "subtitle": {
+          "$ref": "common_types.json#/$defs/DynamicString"
+        },
+        "image": {
+          "$ref": "common_types.json#/$defs/DynamicString",
+          "description": "The title's icon: the icon URL a tool gave for it (list_games gives file:// URLs on the console). Optional; a colored square with the title's initials is drawn without it."
+        },
+        "badge": {
+          "$ref": "common_types.json#/$defs/DynamicString",
+          "description": "Short corner label, e.g. 'NEW' or '4K'."
+        },
+        "action": {
+          "$ref": "common_types.json#/$defs/Action",
+          "description": "Runs when the tile is focused and Cross is pressed."
+        },
+        "haptic": {
+          "$ref": "#/$defs/HapticEffect",
+          "description": "Felt when the tile's action runs."
+        }
+      },
+      "required": [
+        "component",
+        "title",
+        "action"
+      ]
+    },
+    "Menu": {
+      "type": "object",
+      "properties": {
+        "component": {
+          "const": "Menu"
+        },
+        "title": {
+          "$ref": "common_types.json#/$defs/DynamicString"
+        },
+        "children": {
+          "$ref": "common_types.json#/$defs/ChildList",
+          "description": "MenuItem components in a vertical focus list. Use for choosing one option among a few (up to about 8)."
+        }
+      },
+      "required": [
+        "component",
+        "children"
+      ]
+    },
+    "MenuItem": {
+      "type": "object",
+      "properties": {
+        "component": {
+          "const": "MenuItem"
+        },
+        "label": {
+          "$ref": "common_types.json#/$defs/DynamicString"
+        },
+        "detail": {
+          "$ref": "common_types.json#/$defs/DynamicString",
+          "description": "Secondary text, right-aligned (a value, a size, a date)."
+        },
+        "icon": {
+          "type": "string",
+          "enum": [
+            "play",
+            "download",
+            "delete",
+            "settings",
+            "search",
+            "mic",
+            "info",
+            "folder",
+            "user",
+            "back"
+          ]
+        },
+        "action": {
+          "$ref": "common_types.json#/$defs/Action"
+        },
+        "haptic": {
+          "$ref": "#/$defs/HapticEffect",
+          "description": "Felt when the item's action runs."
+        }
+      },
+      "required": [
+        "component",
+        "label",
+        "action"
+      ]
+    },
+    "ButtonHints": {
+      "type": "object",
+      "properties": {
+        "component": {
+          "const": "ButtonHints"
+        },
+        "hints": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Controller shortcuts listed bottom right, e.g. '△ Refresh'. The button works anywhere on the screen.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "button": {
+                "type": "string",
+                "enum": [
+                  "cross",
+                  "circle",
+                  "triangle",
+                  "square",
+                  "l1",
+                  "r1",
+                  "l2",
+                  "r2",
+                  "options"
+                ]
+              },
+              "label": {
+                "type": "string"
+              },
+              "action": {
+                "$ref": "common_types.json#/$defs/Action"
+              },
+              "haptic": {
+                "$ref": "#/$defs/HapticEffect",
+                "description": "Felt when the button's action runs."
+              }
+            },
+            "required": [
+              "button",
+              "label",
+              "action"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "component",
+        "hints"
+      ]
+    },
+    "TextPrompt": {
+      "type": "object",
+      "properties": {
+        "component": {
+          "const": "TextPrompt"
+        },
+        "title": {
+          "type": "string",
+          "description": "Shown above the system keyboard."
+        },
+        "placeholder": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "text",
+            "number",
+            "url",
+            "email",
+            "password"
+          ],
+          "default": "text"
+        },
+        "maxLength": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2048
+        },
+        "value": {
+          "$ref": "common_types.json#/$defs/DataBinding",
+          "description": "Data-model path the typed text is written to."
+        },
+        "submit": {
+          "$ref": "common_types.json#/$defs/Action",
+          "description": "Runs when the user confirms the keyboard. Put the value path in the event context to receive the text."
+        },
+        "submitHaptic": {
+          "$ref": "#/$defs/HapticEffect",
+          "description": "Felt when the user submits."
+        }
+      },
+      "required": [
+        "component",
+        "title",
+        "value",
+        "submit"
+      ]
+    },
+    "Confirm": {
+      "type": "object",
+      "properties": {
+        "component": {
+          "const": "Confirm"
+        },
+        "message": {
+          "$ref": "common_types.json#/$defs/DynamicString"
+        },
+        "confirmLabel": {
+          "type": "string",
+          "default": "OK"
+        },
+        "cancelLabel": {
+          "type": "string",
+          "default": "Cancel"
+        },
+        "destructive": {
+          "type": "boolean",
+          "description": "Focus starts on Cancel and the confirm button is drawn as a warning."
+        },
+        "confirm": {
+          "$ref": "common_types.json#/$defs/Action"
+        },
+        "cancel": {
+          "$ref": "common_types.json#/$defs/Action"
+        },
+        "confirmHaptic": {
+          "$ref": "#/$defs/HapticEffect",
+          "description": "Felt when the user confirms."
+        },
+        "cancelHaptic": {
+          "$ref": "#/$defs/HapticEffect",
+          "description": "Felt when the user cancels."
+        }
+      },
+      "required": [
+        "component",
+        "message",
+        "confirm"
+      ]
+    },
+    "Notice": {
+      "type": "object",
+      "properties": {
+        "component": {
+          "const": "Notice"
+        },
+        "text": {
+          "$ref": "common_types.json#/$defs/DynamicString"
+        },
+        "icon": {
+          "type": "string",
+          "enum": [
+            "info",
+            "success",
+            "warning",
+            "error",
+            "download",
+            "trophy"
+          ]
+        },
+        "durationMs": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 15000,
+          "default": 5000
+        }
+      },
+      "required": [
+        "component",
+        "text"
+      ]
+    },
+    "Progress": {
+      "type": "object",
+      "properties": {
+        "component": {
+          "const": "Progress"
+        },
+        "label": {
+          "$ref": "common_types.json#/$defs/DynamicString"
+        },
+        "value": {
+          "$ref": "common_types.json#/$defs/DynamicNumber",
+          "description": "0 to 1. Omit for an indeterminate bar."
+        },
+        "detail": {
+          "$ref": "common_types.json#/$defs/DynamicString",
+          "description": "e.g. '1.2 GB of 4.8 GB'."
+        }
+      },
+      "required": [
+        "component",
+        "label"
+      ]
+    },
+    "StatusChip": {
+      "type": "object",
+      "properties": {
+        "component": {
+          "const": "StatusChip"
+        },
+        "label": {
+          "$ref": "common_types.json#/$defs/DynamicString"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "ready",
+            "busy",
+            "error",
+            "offline"
+          ]
+        }
+      },
+      "required": [
+        "component",
+        "label",
+        "state"
+      ]
+    },
+    "Stats": {
+      "type": "object",
+      "description": "A small dashboard of numbers: labelled value tiles in a 1-3 column grid, each a big value under a caption, with an optional mini bar. Use for figures (storage, counts, sizes, times) instead of lines of text.",
+      "properties": {
+        "component": {
+          "const": "Stats"
+        },
+        "items": {
+          "type": "array",
+          "description": "The value tiles, left to right then wrapping.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "$ref": "common_types.json#/$defs/DynamicString",
+                "description": "The caption above the value."
+              },
+              "value": {
+                "$ref": "common_types.json#/$defs/DynamicString",
+                "description": "The figure, pre-formatted, e.g. '161.2 GB'."
+              },
+              "detail": {
+                "$ref": "common_types.json#/$defs/DynamicString",
+                "description": "Optional one-line detail under the value, e.g. 'of 670.6 GB'."
+              },
+              "fraction": {
+                "$ref": "common_types.json#/$defs/DynamicNumber",
+                "description": "Optional 0 to 1: draws a mini bar under the value, e.g. used/total."
+              }
+            },
+            "required": [
+              "label",
+              "value"
+            ]
+          }
+        }
+      },
+      "required": [
+        "component",
+        "items"
+      ]
+    },
+    "Text": {
+      "type": "object",
+      "properties": {
+        "component": {
+          "const": "Text"
+        },
+        "text": {
+          "$ref": "common_types.json#/$defs/DynamicString",
+          "description": "Plain text; **bold** and line breaks are honored."
+        },
+        "variant": {
+          "type": "string",
+          "enum": [
+            "heading",
+            "body",
+            "caption"
+          ],
+          "default": "body"
+        }
+      },
+      "required": [
+        "component",
+        "text"
+      ]
+    },
+    "Card": {
+      "type": "object",
+      "properties": {
+        "component": {
+          "const": "Card"
+        },
+        "title": {
+          "$ref": "common_types.json#/$defs/DynamicString"
+        },
+        "children": {
+          "$ref": "common_types.json#/$defs/ChildList",
+          "description": "Content stacked vertically inside a glass panel. Not focusable itself."
+        }
+      },
+      "required": [
+        "component",
+        "children"
+      ]
+    },
+    "Image": {
+      "type": "object",
+      "properties": {
+        "component": {
+          "const": "Image"
+        },
+        "url": {
+          "$ref": "common_types.json#/$defs/DynamicString"
+        },
+        "fit": {
+          "type": "string",
+          "enum": [
+            "contain",
+            "cover"
+          ],
+          "default": "contain"
+        }
+      },
+      "required": [
+        "component",
+        "url"
+      ]
+    },
+    "VoicePrompt": {
+      "type": "object",
+      "properties": {
+        "component": {
+          "const": "VoicePrompt"
+        },
+        "label": {
+          "type": "string",
+          "description": "e.g. 'Hold R2 and speak'."
+        },
+        "button": {
+          "type": "string",
+          "enum": [
+            "r2",
+            "l2",
+            "square"
+          ],
+          "default": "r2"
+        },
+        "value": {
+          "$ref": "common_types.json#/$defs/DataBinding",
+          "description": "Data-model path the transcript (from the DualSense microphone) is written to."
+        },
+        "submit": {
+          "$ref": "common_types.json#/$defs/Action",
+          "description": "Runs when the button is released and the transcript is ready."
+        }
+      },
+      "required": [
+        "component",
+        "label",
+        "value",
+        "submit"
+      ]
+    }
+  },
+  "functions": {
+    "haptic": {
+      "type": "object",
+      "description": "Play a named haptic effect, e.g. success after an action completes. Use sparingly.",
+      "returnType": "void",
+      "allowedCallers": "rendererOrAgent",
+      "properties": {
+        "@call": {
+          "const": "haptic"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "effect": {
+              "$ref": "#/$defs/HapticEffect"
+            }
+          },
+          "required": [
+            "effect"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "@call",
+        "args"
+      ]
+    },
+    "hapticPattern": {
+      "type": "object",
+      "description": "Play a custom rhythm on the two motors, for what the named effects don't cover. At most 16 steps and 10 seconds in all; the renderer stops a pattern at 10 s.",
+      "returnType": "void",
+      "allowedCallers": "rendererOrAgent",
+      "properties": {
+        "@call": {
+          "const": "hapticPattern"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "steps": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 16,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "low": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "The deep (large) motor."
+                  },
+                  "high": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "The sharp (small) motor."
+                  },
+                  "ms": {
+                    "type": "integer",
+                    "minimum": 10,
+                    "maximum": 10000
+                  }
+                },
+                "required": [
+                  "ms"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "steps"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "@call",
+        "args"
+      ]
+    },
+    "rumble": {
+      "type": "object",
+      "description": "Vibrate both motors at one level for a given time. For feedback, prefer haptic.",
+      "returnType": "void",
+      "allowedCallers": "rendererOrAgent",
+      "properties": {
+        "@call": {
+          "const": "rumble"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "intensity": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "durationMs": {
+              "type": "integer",
+              "minimum": 50,
+              "maximum": 10000
+            }
+          },
+          "required": [
+            "intensity",
+            "durationMs"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "@call",
+        "args"
+      ]
+    },
+    "triggerEffect": {
+      "type": "object",
+      "description": "Set adaptive-trigger resistance on L2 or R2, e.g. stiffen R2 while a long job runs.",
+      "returnType": "void",
+      "allowedCallers": "rendererOrAgent",
+      "properties": {
+        "@call": {
+          "const": "triggerEffect"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "trigger": {
+              "type": "string",
+              "enum": [
+                "l2",
+                "r2"
+              ]
+            },
+            "effect": {
+              "type": "string",
+              "enum": [
+                "off",
+                "feedback",
+                "weapon",
+                "vibration"
+              ]
+            },
+            "strength": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "trigger",
+            "effect"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "@call",
+        "args"
+      ]
+    },
+    "lightbar": {
+      "type": "object",
+      "description": "Set the controller light bar color, e.g. to show agent state.",
+      "returnType": "void",
+      "allowedCallers": "rendererOrAgent",
+      "properties": {
+        "@call": {
+          "const": "lightbar"
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "color": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            }
+          },
+          "required": [
+            "color"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "@call",
+        "args"
+      ]
+    }
+  },
+  "$defs": {
+    "HapticEffect": {
+      "type": "string",
+      "enum": [
+        "tick",
+        "confirm",
+        "success",
+        "warning",
+        "error",
+        "attention"
+      ],
+      "description": "How something should feel; the renderer decides what each is on its hardware. tick = a light click, confirm = one firm pulse, success = two rising pulses, warning = two deep pulses, error = three heavy pulses, attention = a rising buzz."
+    },
+    "anyComponent": {
+      "oneOf": [
+        {
+          "$ref": "#/components/Screen"
+        },
+        {
+          "$ref": "#/components/Pages"
+        },
+        {
+          "$ref": "#/components/Shelf"
+        },
+        {
+          "$ref": "#/components/Tile"
+        },
+        {
+          "$ref": "#/components/Menu"
+        },
+        {
+          "$ref": "#/components/MenuItem"
+        },
+        {
+          "$ref": "#/components/ButtonHints"
+        },
+        {
+          "$ref": "#/components/TextPrompt"
+        },
+        {
+          "$ref": "#/components/Confirm"
+        },
+        {
+          "$ref": "#/components/Notice"
+        },
+        {
+          "$ref": "#/components/Progress"
+        },
+        {
+          "$ref": "#/components/StatusChip"
+        },
+        {
+          "$ref": "#/components/Text"
+        },
+        {
+          "$ref": "#/components/Card"
+        },
+        {
+          "$ref": "#/components/Image"
+        },
+        {
+          "$ref": "#/components/VoicePrompt"
+        }
+      ],
+      "discriminator": {
+        "propertyName": "component"
+      }
+    },
+    "anyFunction": {
+      "oneOf": [
+        {
+          "$ref": "#/functions/haptic"
+        },
+        {
+          "$ref": "#/functions/hapticPattern"
+        },
+        {
+          "$ref": "#/functions/rumble"
+        },
+        {
+          "$ref": "#/functions/triggerEffect"
+        },
+        {
+          "$ref": "#/functions/lightbar"
+        }
+      ]
+    }
+  }
+}

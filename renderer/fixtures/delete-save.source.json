@@ -1,0 +1,14 @@
+{
+  "_source": {
+    "file": "2026-11-04T03-00-16-127Z.json",
+    "model": "MiniMax-M3",
+    "scenario": "delete-save",
+    "tool": "confirm",
+    "args": {
+      "message": "Delete Elden Ring save data (12 MB)? This permanently erases your saved progress and cannot be undone.",
+      "confirmLabel": "Delete Save",
+      "cancelLabel": "Keep Save",
+      "destructive": true
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "_source": {
+    "file": "2026-11-04T03-00-16-127Z.json",
+    "model": "MiniMax-M3",
+    "scenario": "save-name",
+    "tool": "ask_text",
+    "args": {
+      "title": "Name your new save slot",
+      "placeholder": "Enter a name",
+      "kind": "text"
+    }
+  }
+}

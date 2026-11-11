@@ -1,0 +1,53 @@
+{
+  "_source": {
+    "file": "2026-11-04T03-00-16-127Z.json",
+    "model": "MiniMax-M3",
+    "scenario": "home-shelves",
+    "tool": "show_shelf",
+    "args": {
+      "title": "PlayStation 5 — Home",
+      "rows": [
+        {
+          "title": "Recently Played",
+          "tiles": [
+            {
+              "id": "astro-bot",
+              "title": "Astro Bot",
+              "subtitle": "42 hours played · Last played today"
+            },
+            {
+              "id": "returnal",
+              "title": "Returnal",
+              "subtitle": "18 hours played · Last played yesterday"
+            },
+            {
+              "id": "hades-ii",
+              "title": "Hades II",
+              "subtitle": "31 hours played · Last played 2 days ago"
+            }
+          ]
+        },
+        {
+          "title": "Indie Recommendations",
+          "tiles": [
+            {
+              "id": "hollow-knight",
+              "title": "Hollow Knight",
+              "subtitle": "Metroidvania · 4.9 ★"
+            },
+            {
+              "id": "celeste",
+              "title": "Celeste",
+              "subtitle": "Platformer · Precision platforming"
+            },
+            {
+              "id": "dead-cells",
+              "title": "Dead Cells",
+              "subtitle": "Roguelite · Huge replay value"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

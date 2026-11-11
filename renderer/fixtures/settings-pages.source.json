@@ -1,0 +1,40 @@
+{
+  "_source": {
+    "file": "2026-11-04T03-00-16-127Z.json",
+    "model": "MiniMax-M3",
+    "scenario": "settings-pages",
+    "tool": "show_pages",
+    "args": {
+      "title": "Settings",
+      "pages": [
+        {
+          "title": "Model",
+          "lines": [
+            "Model: claude-sonnet-4.5",
+            "Max output tokens: 8192",
+            "Temperature: 0.7",
+            "Streaming: On"
+          ]
+        },
+        {
+          "title": "Voice",
+          "lines": [
+            "Input: DualSense Microphone",
+            "Wake word: \"Hey Assistant\"",
+            "Voice language: English (US)",
+            "Output voice: Off"
+          ]
+        },
+        {
+          "title": "About",
+          "lines": [
+            "Assistant for PlayStation 5",
+            "Version: 2.4.1",
+            "Build: 2026.03.11",
+            "Licensed to: You"
+          ]
+        }
+      ]
+    }
+  }
+}

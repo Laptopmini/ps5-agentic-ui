@@ -1,0 +1,31 @@
+{
+  "_source": {
+    "file": "2026-11-04T03-00-16-127Z.json",
+    "model": "MiniMax-M3",
+    "scenario": "quiz",
+    "tool": "show_menu",
+    "args": {
+      "title": "PlayStation History Quiz",
+      "prompt": "In which year was the original PlayStation (PS1) first launched in Japan?",
+      "items": [
+        {
+          "id": "a",
+          "label": "1992"
+        },
+        {
+          "id": "b",
+          "label": "1994",
+          "detail": "December 3, 1994 — launch in Japan"
+        },
+        {
+          "id": "c",
+          "label": "1996"
+        },
+        {
+          "id": "d",
+          "label": "1998"
+        }
+      ]
+    }
+  }
+}

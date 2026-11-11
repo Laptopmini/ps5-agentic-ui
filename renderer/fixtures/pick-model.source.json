@@ -1,0 +1,29 @@
+{
+  "_source": {
+    "file": "2026-11-04T03-00-16-127Z.json",
+    "model": "MiniMax-M3",
+    "scenario": "pick-model",
+    "tool": "show_menu",
+    "args": {
+      "title": "Select Local Model",
+      "prompt": "Which model would you like to load?",
+      "items": [
+        {
+          "id": "qwen9b",
+          "label": "Qwen 9B",
+          "detail": "5.4 GB · strongest quality, heaviest download"
+        },
+        {
+          "id": "mistral7b",
+          "label": "Mistral 7B",
+          "detail": "4.1 GB · balanced speed and quality"
+        },
+        {
+          "id": "minicpm2b",
+          "label": "MiniCPM 2B",
+          "detail": "2.2 GB · fastest load, lowest quality"
+        }
+      ]
+    }
+  }
+}

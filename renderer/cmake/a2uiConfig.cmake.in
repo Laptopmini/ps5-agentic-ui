@@ -1,0 +1,5 @@
+@PACKAGE_INIT@
+# The a2ui renderer library. Header-only dependency (nlohmann/json) is installed alongside, so there
+# is nothing else to find. Use: target_link_libraries(<tgt> PRIVATE a2ui::a2ui)
+include("${CMAKE_CURRENT_LIST_DIR}/a2uiTargets.cmake")
+check_required_components(a2ui)

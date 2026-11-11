@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Set up the PS5 assistant</title>
+<style>
+  :root { color-scheme: dark; --bg: #121318; --panel: #1e2027; --line: #3a3d48; --text: #fff; --muted: #b4b8c2; --accent: #4080ff; --warn: #ff7480; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 34rem; margin: 0 auto; padding: 1.5rem 1.25rem 3rem; }
+  h1 { font-size: 1.5rem; margin: 0 0 .25rem; }
+  p { margin: .5rem 0; }
+  .muted { color: var(--muted); }
+  fieldset { border: 0; padding: 0; margin: 1.25rem 0 0; }
+  legend, label { display: block; font-weight: 600; margin-bottom: .4rem; }
+  .choices { display: grid; gap: .5rem; }
+  .choice { display: flex; gap: .75rem; align-items: flex-start; padding: .75rem; border: 1px solid var(--line); border-radius: .75rem; background: var(--panel); font-weight: 400; cursor: pointer; }
+  .choice:has(input:checked) { border-color: var(--accent); }
+  .choice input { margin-top: .3rem; accent-color: var(--accent); }
+  .choice strong { display: block; }
+  .field { margin-top: 1.25rem; }
+  input[type=text], input[type=password], input[type=url] { width: 100%; font: inherit; color: inherit; background: var(--panel); border: 1px solid var(--line); border-radius: .6rem; padding: .7rem .8rem; min-height: 44px; }
+  input:focus-visible, button:focus-visible, .choice:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 3px; }
+  #code { letter-spacing: .3em; font-size: 1.4rem; text-align: center; }
+  .note { margin-top: .75rem; padding: .75rem .9rem; border-left: 3px solid var(--accent); background: var(--panel); border-radius: .4rem; font-size: .95rem; }
+  button { margin-top: 1.5rem; width: 100%; min-height: 48px; font: inherit; font-weight: 600; color: #fff; background: var(--accent); border: 0; border-radius: 999px; cursor: pointer; transition: transform .18s; }
+  button:active { transform: scale(.96); }
+  button:disabled { opacity: .6; }
+  #result { margin-top: 1rem; min-height: 1.5em; }
+  #result.error { color: var(--warn); }
+  [hidden] { display: none !important; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Set up the PS5 assistant</h1>
+  <p class="muted">Send a model key to the console. It's encrypted for this console before it leaves this page.</p>
+
+  <form id="form" novalidate>
+    <fieldset>
+      <legend>Model</legend>
+      <div class="choices">
+        <label class="choice"><input type="radio" name="provider" value="openrouter" checked>
+          <span><strong>OpenRouter</strong><span class="muted">A key you can cap and limit to one model. Recommended.</span></span></label>
+        <label class="choice"><input type="radio" name="provider" value="minimax">
+          <span><strong>MiniMax</strong><span class="muted">A key from platform.minimax.io.</span></span></label>
+        <label class="choice"><input type="radio" name="provider" value="server">
+          <span><strong>My own server</strong><span class="muted">The key stays on your computer.</span></span></label>
+        <label class="choice"><input type="radio" name="provider" value="channel">
+          <span><strong>A CopilotKit channel</strong><span class="muted">An agent elsewhere talks to you through this console.</span></span></label>
+      </div>
+    </fieldset>
+
+    <div class="note" data-for="openrouter">
+      Make a key just for this console. It's stored on the PS5, where other homebrew can read it, so on
+      openrouter.ai give it a <strong>credit limit</strong> and a <strong>guardrail</strong> that allows only the
+      model below. If it ever leaks, it can't spend more than that limit or call anything else, and you can delete it there.
+    </div>
+    <div class="note" data-for="minimax" hidden>
+      Make a key just for this console. It's stored on the PS5, where other homebrew can read it, and MiniMax doesn't
+      offer spending caps per key, so keep your balance low. If the key ever leaks, delete it on platform.minimax.io;
+      nothing else uses it.
+    </div>
+    <div class="note" data-for="server" hidden>
+      Run the agent server on your computer (it holds the model key) and enter its address and access code. The
+      console only stores those.
+    </div>
+    <div class="note" data-for="channel" hidden>
+      Run the PS5 channel on your computer (<code>channel/example.ts</code>, or your own CopilotKit channel with the
+      PS5 adapter) and enter its address and access code. The console only stores those.
+    </div>
+
+    <div class="field" data-for="server channel" hidden>
+      <label for="url" id="url-label">Server address</label>
+      <input id="url" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="http://192.168.0.10:8790/agent">
+    </div>
+    <div class="field">
+      <label for="key" id="key-label">API key</label>
+      <input id="key" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" required>
+    </div>
+    <div class="field" data-for="openrouter minimax">
+      <label for="model">Model <span class="muted">(optional)</span></label>
+      <input id="model" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="minimax/minimax-m3">
+    </div>
+    <div class="field">
+      <label for="code">Code on the TV</label>
+      <input id="code" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required>
+    </div>
+
+    <button id="send" type="submit">Send to the console</button>
+    <p id="result" role="status" aria-live="polite"></p>
+  </form>
+</main>
+<script src="/nacl.min.js"></script>
+<script>
+  const CONSOLE_PK = "{{PK}}";
+  const form = document.getElementById("form"), result = document.getElementById("result"), send = document.getElementById("send");
+  const $ = (id) => document.getElementById(id);
+  const placeholders = { openrouter: "minimax/minimax-m3", minimax: "MiniMax-M3" };
+
+  // The QR code on the TV carries the code in the fragment, which never leaves this device.
+  const fromHash = new URLSearchParams(location.hash.slice(1)).get("code");
+  if (fromHash && /^[0-9]{6}$/.test(fromHash)) $("code").value = fromHash;
+  history.replaceState(null, "", location.pathname);
+
+  function provider() { return form.querySelector("input[name=provider]:checked").value; }
+  function update() {
+    const p = provider();
+    for (const el of document.querySelectorAll("[data-for]")) el.hidden = !el.dataset.for.split(" ").includes(p);
+    const remote = p === "server" || p === "channel";
+    $("key-label").textContent = remote ? "Access code" : "API key";
+    $("url-label").textContent = p === "channel" ? "Channel address" : "Server address";
+    $("url").placeholder = p === "channel" ? "http://192.168.0.10:8792" : "http://192.168.0.10:8790/agent";
+    if (placeholders[p]) $("model").placeholder = placeholders[p];
+  }
+  form.addEventListener("change", update);
+  update();
+
+  function say(text, isError) { result.textContent = text; result.className = isError ? "error" : ""; }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const p = provider();
+    const remote = p === "server" || p === "channel";
+    const message = { code: $("code").value.trim(), provider: p, key: $("key").value.trim(), model: remote ? "" : $("model").value.trim(), url: remote ? $("url").value.trim() : "" };
+    if (!/^[0-9]{6}$/.test(message.code)) return say("Enter the six digits shown on the TV.", true);
+    if (!message.key) return say(remote ? "Enter the access code." : "Paste the API key.", true);
+    send.disabled = true;
+    say("Sending…");
+    try {
+      const mine = nacl.box.keyPair();
+      const nonce = nacl.randomBytes(nacl.box.nonceLength);
+      const plain = new TextEncoder().encode(JSON.stringify(message));
+      const box = nacl.box(plain, nonce, b64decode(CONSOLE_PK), mine.secretKey);
+      const res = await fetch("/pair", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ pk: b64(mine.publicKey), nonce: b64(nonce), box: b64(box) }) });
+      const body = await res.json().catch(() => ({}));
+      if (res.ok) {
+        $("key").value = "";
+        form.querySelectorAll("input, button").forEach((el) => (el.disabled = true));
+        say(`Done. The console is using ${body.provider}. You can close this page.`);
+        return;
+      }
+      say(body.error || `The console answered ${res.status}.`, true);
+    } catch {
+      say("Couldn't reach the console. Is the setup screen still open on the TV?", true);
+    }
+    send.disabled = false;
+  });
+
+  function b64(bytes) { let s = ""; for (const b of bytes) s += String.fromCharCode(b); return btoa(s); }
+  function b64decode(text) { return Uint8Array.from(atob(text), (c) => c.charCodeAt(0)); }
+</script>
+</body>
+</html>

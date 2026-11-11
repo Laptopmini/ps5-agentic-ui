@@ -1,0 +1,8 @@
+nlohmann/json v3.12.0 (MIT)
+stb_truetype.h, stb_image.h (v2.30, PNG and JPEG only) nothings/stb@d14d46f6b444 (MIT or public domain)
+Noto Sans variable, google/fonts main as of 2026-11-03 (OFL 1.1), default instance used
+Fallback fonts, google/fonts main bbda7253fc36 (2026-11-04, OFL 1.1, same license text as fonts/OFL.txt), default instances: NotoEmoji.ttf (ofl/notoemoji/NotoEmoji[wght].ttf, monochrome emoji), NotoSansSymbols2.ttf (ofl/notosanssymbols2/NotoSansSymbols2-Regular.ttf), NotoSansSymbols.ttf (ofl/notosanssymbols/NotoSansSymbols[wght].ttf, arrows)
+QuickJS 2026-06-04, bellard.org/quickjs/quickjs-2026-06-04.tar.xz sha256 b376e839b322978313d929fd20663b11ba58b75df5a46c126dd19ea2fa70ad2a (MIT); core only (no quickjs-libc). The PS5 build links the same version from the pacbrew bundle (libquickjs 2026.06.04).
+TweetNaCl (C) 20140427, tweetnacl.cr.yp.to/20140427/tweetnacl.{c,h}, sha256 02e65bc3…75c4 (.c) and 43f29ad7…4287 (.h) (public domain)
+tweetnacl-js 1.0.3, npm tweetnacl@1.0.3 nacl.min.js, sha256 973cc573…ddbbc (Unlicense)
+QR Code generator (C++) nayuki/QR-Code-generator v1.8.0 (720f62bd), cpp/qrcodegen.{cpp,hpp}, sha256 1f3b3fcd…3d77 (.cpp) and b779c3b1…793 (.hpp) (MIT)

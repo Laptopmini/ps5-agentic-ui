@@ -1,0 +1,99 @@
+{
+  "installed_titles": {
+    "games": [
+      {
+        "id": "CUSA00127",
+        "title": "Netflix",
+        "platform": "PS4"
+      },
+      {
+        "id": "PPSA01325",
+        "title": "Astro's Playroom",
+        "platform": "PS5"
+      },
+      {
+        "id": "PPSA04609",
+        "title": "Ratchet & Clank: Rift Apart",
+        "platform": "PS5"
+      },
+      {
+        "id": "PPSA95210",
+        "title": "PS5 A2UI",
+        "platform": "PS5"
+      }
+    ],
+    "source": "console"
+  },
+  "system_info": {
+    "model": "CFI-1215A",
+    "firmware": "12.70",
+    "uptimeMinutes": 214,
+    "storage": {
+      "totalGB": 825.1,
+      "usedGB": 512.7,
+      "freeGB": 312.4
+    }
+  },
+  "temperatures": {
+    "cpu": 61,
+    "soc": 58,
+    "ssd": 44
+  },
+  "saves": {
+    "saves": [
+      {
+        "id": "PPSA01325",
+        "title": "Astro's Playroom",
+        "platform": "PS5",
+        "sizeMB": 4.2,
+        "lastSaved": "2026-11-03"
+      },
+      {
+        "id": "PPSA04609",
+        "title": "Ratchet & Clank: Rift Apart",
+        "platform": "PS5",
+        "sizeMB": 12.8,
+        "lastSaved": "2026-10-21"
+      }
+    ]
+  },
+  "screenshots": {
+    "count": 37,
+    "newest": [
+      {
+        "taken": "2026-11-03",
+        "sizeMB": 1.1
+      },
+      {
+        "taken": "2026-11-03",
+        "sizeMB": 0.9
+      },
+      {
+        "taken": "2026-10-30",
+        "sizeMB": 1.2
+      }
+    ]
+  },
+  "play_activity": {
+    "recentlyPlayed": [
+      {
+        "id": "PPSA01325",
+        "title": "Astro's Playroom",
+        "platform": "PS5",
+        "hoursPlayed": 6.5
+      },
+      {
+        "id": "PPSA04609",
+        "title": "Ratchet & Clank: Rift Apart",
+        "platform": "PS5",
+        "hoursPlayed": 21.3
+      },
+      {
+        "id": "CUSA00127",
+        "title": "Netflix",
+        "platform": "PS4",
+        "hoursPlayed": 48.0
+      }
+    ]
+  }
+}

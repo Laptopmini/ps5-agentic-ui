@@ -1,0 +1,32 @@
+{
+  "_source": {
+    "model": "hand-authored",
+    "scenario": "stats",
+    "tool": "show_stats",
+    "args": {
+      "title": "Storage",
+      "stats": [
+        {
+          "label": "Free space",
+          "value": "161.2 GB",
+          "detail": "of 670.6 GB",
+          "fraction": 0.24038174768863702
+        },
+        {
+          "label": "Used",
+          "value": "509.4 GB",
+          "fraction": 0.7596182523113629
+        },
+        {
+          "label": "Biggest game",
+          "value": "HITMAN 3",
+          "detail": "68.4 GB"
+        }
+      ],
+      "status": {
+        "label": "Healthy",
+        "state": "ready"
+      }
+    }
+  }
+}
