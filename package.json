@@ -1,0 +1,28 @@
+{
+  "name": "ps5-agentic-ui",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "eval:catalog": "node --env-file-if-exists=.env eval/catalog-eval/run.ts",
+    "build:agent-js": "esbuild server/embedded.ts --bundle --format=iife --platform=neutral --target=es2023 --main-fields=module,main --alias:node:crypto=./server/qjs/node-crypto.ts --outfile=server/qjs/agent.js",
+    "pair": "node scripts/ps5-pair.ts",
+    "channel": "node channel/example.ts",
+    "typecheck": "tsc -p tsconfig.json && tsc -p channel/tsconfig.json",
+    "test:channel": "node --test channel/*.test.ts",
+    "test:runtime": "node --test runtime/*.test.ts",
+    "test:catalog": "node --test runtime/catalog.test.ts"
+  },
+  "dependencies": {
+    "@ag-ui/client": "1.0.2",
+    "@copilotkit/channels-core": "0.12.0",
+    "@copilotkit/core": "1.85.0",
+    "@copilotkit/runtime": "1.85.0",
+    "ajv": "^8.20.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "esbuild": "0.28.2",
+    "typescript": "^7.0.2"
+  }
+}
