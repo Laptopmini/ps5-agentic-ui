@@ -1,0 +1,52 @@
+{
+  "name": "copilotkit-ps5",
+  "version": "1.0.0-rc.1",
+  "description": "A CopilotKit Channels PlatformAdapter that turns a jailbroken PlayStation 5 into an agent surface: native A2UI screens, the DualSense, haptics and the system keyboard.",
+  "license": "MIT",
+  "author": "Laptopmini <laptopmini@gmail.com>",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/channel/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/channel/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "esbuild index.ts --bundle --format=esm --platform=node --packages=external --outfile=dist/index.js && tsc -p tsconfig.json && node fix-dts.mjs",
+    "prepublishOnly": "pnpm run build",
+    "test": "node --test *.test.ts"
+  },
+  "peerDependencies": {
+    "@copilotkit/channels-core": ">=0.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.0",
+    "esbuild": "^0.28.0",
+    "typescript": "^7.0.0"
+  },
+  "keywords": [
+    "copilotkit",
+    "channels",
+    "ag-ui",
+    "a2ui",
+    "ps5",
+    "playstation",
+    "agent",
+    "adapter",
+    "generative-ui"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Laptopmini/ps5-agentic-ui.git",
+    "directory": "channel"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

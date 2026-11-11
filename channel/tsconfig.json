@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "dist",
+    "rootDir": "..",
+    "types": ["node"],
+    "skipLibCheck": true,
+    "strict": false
+  },
+  "include": [
+    "index.ts",
+    "adapter.ts",
+    "render.ts",
+    "console-reads.ts",
+    "../runtime/a2ui.ts"
+  ]
+}
