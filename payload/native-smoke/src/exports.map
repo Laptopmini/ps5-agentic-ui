@@ -1,0 +1,4 @@
+/* Native title: export nothing (ps5-native-tool requires imports-only). */
+{
+    local: *;
+};

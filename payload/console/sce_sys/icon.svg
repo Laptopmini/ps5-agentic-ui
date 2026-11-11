@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- PS5 A2UI icon: the app's graphite backdrop and a conversation bubble holding a small screen. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2e3038"/>
+      <stop offset="1" stop-color="#090a0d"/>
+    </linearGradient>
+    <linearGradient id="bubble" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5a92ff"/>
+      <stop offset="1" stop-color="#2f6bea"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <path d="M120 128h272a40 40 0 0 1 40 40v152a40 40 0 0 1-40 40H236l-72 56v-56h-44a40 40 0 0 1-40-40V168a40 40 0 0 1 40-40z" fill="url(#bubble)"/>
+  <rect x="136" y="172" width="240" height="20" rx="10" fill="#fff"/>
+  <rect x="136" y="214" width="112" height="96" rx="14" fill="#fff" fill-opacity=".92"/>
+  <rect x="264" y="214" width="112" height="96" rx="14" fill="#fff" fill-opacity=".45"/>
+</svg>
