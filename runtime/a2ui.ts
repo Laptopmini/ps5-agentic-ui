@@ -11,7 +11,7 @@ import { randomUUID } from "node:crypto";
 type Json = Record<string, any>;
 
 export const A2UI_VERSION = "1.0";
-export const PS5_CATALOG_ID = "https://ps5-agentic-ui.local/catalogs/ps5/v1.json";
+export const PS5_CATALOG_ID = "https://raw.githubusercontent.com/Laptopmini/ps5-agentic-ui/catalog-v1/catalog/ps5.catalog.json";
 export const SURFACE_ACTIVITY = "generative-ui-surface";
 export const FUNCTION_CALL_ACTIVITY = "generative-ui-function-call";
 /** CopilotKit's envelope format (COPILOTKIT_UI_ENVELOPE_FORMAT). */

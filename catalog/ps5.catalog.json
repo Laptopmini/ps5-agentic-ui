@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://ps5-agentic-ui.local/catalogs/ps5/v1.json",
-  "catalogId": "https://ps5-agentic-ui.local/catalogs/ps5/v1.json",
+  "$id": "https://raw.githubusercontent.com/Laptopmini/ps5-agentic-ui/catalog-v1/catalog/ps5.catalog.json",
+  "catalogId": "https://raw.githubusercontent.com/Laptopmini/ps5-agentic-ui/catalog-v1/catalog/ps5.catalog.json",
   "protocolVersion": "1.0",
-  "title": "PS5 native catalog (v1, draft)",
+  "title": "PS5 native catalog (v1)",
   "description": "Components drawn natively by the PS5 renderer, operated with a DualSense controller from a couch, on a TV.",
   "instructions": "Components drawn natively by the PS5 renderer, operated with a DualSense controller from a couch, on a TV. There is no mouse and no hover: one item has focus, the D-pad moves focus, Cross activates, Circle goes back. Prefer few, large, focusable items. Text entry always goes through TextPrompt (the system keyboard), confirmation through Confirm (a system dialog).",
   "components": {

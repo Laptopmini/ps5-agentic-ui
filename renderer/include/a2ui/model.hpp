@@ -19,7 +19,7 @@ using json = nlohmann::json;
 /** The A2UI protocol version this renderer speaks ("version" of every message). */
 inline constexpr const char* kVersion = "1.0";
 /** The PS5 catalog (catalog/ps5.catalog.json). */
-inline constexpr const char* kPs5CatalogId = "https://ps5-agentic-ui.local/catalogs/ps5/v1.json";
+inline constexpr const char* kPs5CatalogId = "https://raw.githubusercontent.com/Laptopmini/ps5-agentic-ui/catalog-v1/catalog/ps5.catalog.json";
 
 struct Surface {
   std::string id;
