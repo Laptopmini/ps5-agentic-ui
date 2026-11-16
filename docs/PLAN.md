@@ -1,6 +1,6 @@
 # Plan & architecture
 
-Agentic UI on a jailbroken PS5 with AG-UI, A2UI 1.0 and CopilotKit. This is the overview and the
+Agentic UI on a PS5 with AG-UI, A2UI 1.0 and CopilotKit. This is the overview and the
 design decisions; the research is in the topical docs below, and open work is in
 [`../BACKLOG.md`](../BACKLOG.md).
 
@@ -19,7 +19,7 @@ A proof of concept, not a product — but the libraries should be clean enough t
 ## The libraries
 
 Four reusable libraries + one example app, sharing the **PS5 catalog** (the A2UI 1.0 contract). The
-[top-level README](../README.md#the-libraries-10--in-progress-see-docsplanmd-libraries-10-m7) maps
+[top-level README](../README.md#the-libraries-10) maps
 them; in short: the **a2ui renderer** (C++, a CMake package), the **agent runtime** (TS, Node server
 or QuickJS-embedded; see [agent.md](agent.md)), the **CopilotKit channel adapter** (`copilotkit-ps5`
 npm; see [channel.md](channel.md)), and the **device layer** (haptics/light bar/triggers + console
@@ -59,8 +59,10 @@ bindings). The example app is `payload/console` (see [packaging.md](packaging.md
 Done: the libraries on the Mac and on the console; the app with its own on-console agent (native
 screens, DualSense, system keyboard, dialogs, notifications, HTTPS to the model, a home-screen tile);
 the PS5 as a CopilotKit channel; background presence; on-console voice (whisper STT on the GPU). The
-**1.0 library cut (M7)** is nearly complete — stable catalog, CMake + npm packaging, docs, license —
-with the rc tag and catalog freeze remaining. Next after that is **OpenDots on the PS5 (M5)** as the
+**1.0 library cut (M7)** is done — stable catalog, CMake + npm packaging, docs, license,
+and the `v1.0.0-rc.1` tag and `catalog-v1` freeze. The one remaining M7 step is
+submitting the renderer and agent runtime to the A2UI ecosystem list, which waits on making the
+repo public (see [`going-public.md`](going-public.md)). Next after that is **OpenDots on the PS5 (M5)** as the
 external acceptance test. See [`../BACKLOG.md`](../BACKLOG.md) for everything open.
 
 ## Platform constraints (worth knowing)

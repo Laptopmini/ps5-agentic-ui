@@ -21,7 +21,7 @@ Exact versions and checksums for the vendored code are pinned in
 | TweetNaCl (C) | 20140427 | Public Domain | `renderer/vendor/tweetnacl/` |
 | tweetnacl-js (`nacl.min.js`) | 1.0.3 | Unlicense | `renderer/vendor/tweetnacl/` |
 | QR-Code-generator (C++) | 1.8.0 | MIT | `renderer/vendor/qrcodegen/` |
-| A2UI 1.0 schemas (Google A2UI) | ee0fe35 (2026-11-09) | Apache-2.0 | `vendor/a2ui-v1_0/` |
+| A2UI 1.0 schemas (a2ui-project/a2ui, formerly google/A2UI) | ee0fe35 (2026-11-09) | Apache-2.0 | `vendor/a2ui-v1_0/` |
 
 ## Linked into a console build — distributed alongside the app
 

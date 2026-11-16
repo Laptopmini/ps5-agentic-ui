@@ -7,8 +7,9 @@ goal and architecture, and the topical docs under [`docs/`](docs/) for the resea
 
 - **1.0 cut (M7) — rc tagged, catalog frozen.** `v1.0.0-rc.1` is cut and the catalog is frozen at
   the `catalog-v1` tag (`catalogId`/`$id`, `PS5_CATALOG_ID`, the renderer's `kPs5CatalogId`). Left:
-  submit the C/C++ renderer to the A2UI ecosystem list — a public action that also needs the repo to
-  be public (the same step that makes the frozen `catalogId` URL externally resolvable).
+  submit the C/C++ renderer and the TS agent runtime to the A2UI ecosystem list — a public action
+  that also needs the repo to be public (the same step that makes the frozen `catalogId` URL
+  externally resolvable). Gates and steps are in [`docs/going-public.md`](docs/going-public.md).
 - **OpenDots on the PS5 (M5).** Plug OpenDots into the channel / AG-UI path on the frozen 1.0 surface
   (its model on MiniMax, text first, voice already landed). The external acceptance test for 1.0.
 - **Local-model track (M8, optional).** Intent-tool eval of a 7–9B model (via ProsperoAI on the PS5)

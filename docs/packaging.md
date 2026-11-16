@@ -1,7 +1,7 @@
-# Packaging & running an app on a jailbroken PS5
+# Packaging & running an app on a PS5
 
 Reusable notes for PS5 homebrew developers: how to get a C++ app with a window, networking and the
-GPU onto a jailbroken console, and the trade-offs between the two distribution shapes. Verified on
+GPU onto a console, and the trade-offs between the two distribution shapes. Verified on
 firmware **12.70** (Relapse + kstuff + ShadowMountPlus).
 
 ## The toolchain

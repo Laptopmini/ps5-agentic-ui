@@ -1,8 +1,8 @@
 # ps5-agentic-ui
 
-Open-source tooling to put **agentic UIs on a jailbroken PlayStation 5** with AG-UI, A2UI 1.0 and CopilotKit — plus a proof-of-concept app (**PS5 A2UI**) built only from that tooling. A2UI surfaces become native, controller-driven PS5 screens; the DualSense, haptics and the system keyboard are the input; the agent runs on a cloud model (any OpenAI-compatible provider via OpenRouter by default), a LAN model, or a model on the PS5's own GPU.
+Open-source tooling to put **agentic UIs on a PlayStation 5** with AG-UI, A2UI 1.0 and CopilotKit — plus a proof-of-concept app (**PS5 A2UI**) built only from that tooling. A2UI surfaces become native, controller-driven PS5 screens; the DualSense, haptics and the system keyboard are the input; the agent runs on a cloud model (any OpenAI-compatible provider via OpenRouter by default), a LAN model, or a model on the PS5's own GPU.
 
-## The libraries (1.0 — in progress, see `docs/PLAN.md` "Libraries 1.0 (M7)")
+## The libraries (1.0)
 
 Four reusable libraries, and one example app that uses only them. They share the **PS5 catalog** (`catalog/ps5.catalog.json`), the A2UI 1.0 contract between agent and renderer.
 

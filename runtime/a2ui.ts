@@ -5,7 +5,7 @@
 //   per call ("genui-fn:<functionCallId>", "generative-ui-function-call");
 // - a press on a surface starts a run with a visible user message and the A2UI action message in
 //   forwardedProps.copilotkit.ui.metadata.extensions.copilotkit_action.
-// Spec: vendor/a2ui-v1_0 (google/A2UI specification/v1_0).
+// Spec: vendor/a2ui-v1_0 (a2ui-project/a2ui, formerly google/A2UI, specification/v1_0).
 import { randomUUID } from "node:crypto";
 
 type Json = Record<string, any>;

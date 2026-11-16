@@ -1,6 +1,6 @@
 # copilotkit-ps5
 
-A [CopilotKit Channels](https://docs.copilotkit.ai) `PlatformAdapter` that turns a jailbroken **PlayStation 5** into an agent surface: the agent's generative UI is drawn as **native A2UI screens** (menus, shelves of tiles, info/stat dashboards, the system keyboard, system dialogs), driven with the **DualSense**, with **haptics**, the light bar and adaptive triggers as device feedback.
+A [CopilotKit Channels](https://docs.copilotkit.ai) `PlatformAdapter` that turns a **PlayStation 5** into an agent surface: the agent's generative UI is drawn as **native A2UI screens** (menus, shelves of tiles, info/stat dashboards, the system keyboard, system dialogs), driven with the **DualSense**, with **haptics**, the light bar and adaptive triggers as device feedback.
 
 It's one adapter for the PS5 A2UI app (`ps5-agentic-ui`). The console runs a small client; this adapter is what an agent elsewhere on the network talks to through Channels. It depends only on `@copilotkit/channels-core` (a peer), and runs on the Channels runner without CopilotKit Intelligence.
 
