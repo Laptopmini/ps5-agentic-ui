@@ -61,7 +61,7 @@ The app opens on a setup screen. From there:
 
 - **Square** starts the offline demo: sample screens and a canned conversation, no key needed.
 - **Scan the QR code** with a phone to give the console a model key (encrypted for the console before it leaves the page). The agent then runs on the console itself.
-- Or run the agent on your computer and point the console at it: `PS5_HOST=<console ip> LLM_API_KEY=... LLM_MODEL=... scripts/ps5-play.sh`. The key stays on the computer.
+- Or run the agent on your computer and point the console at it: `PS5_HOST=<console ip> LLM_API_KEY=... LLM_MODEL=... scripts/ps5-play.sh`. The key stays on the computer. An agent on your computer works on a simulated console (made-up games and saves); to read the real one, run the agent on the console or use a channel.
 - Or make the console a CopilotKit channel: `scripts/ps5-channel.sh`, see [`docs/channel.md`](docs/channel.md).
 
 Voice input (hold R2 and speak) needs a speech model next to the app; see [`docs/voice.md`](docs/voice.md). [`docs/packaging.md`](docs/packaging.md) explains the toolchain and what gets installed.
