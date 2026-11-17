@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Cross-build ggml (Vulkan backend) + whisper.cpp as PS5 static libraries, for on-console
-# speech-to-text (finding 25, Track B). The libs link into payload/console and drive the
+# speech-to-text (docs/voice.md). The libs link into payload/console and drive the
 # RADV GPU through the stock SDK libvulkan.so.1 — no Mihawk ps5-mesa fork, no native title.
 #
 #   scripts/ps5-ggml.sh            build (if the libs are missing) and install into payload/console/ggml

@@ -1,4 +1,4 @@
-// Spike: do the PS5 channel's turns reach CopilotKit Intelligence (threads, learning) when a key is
+// Do the PS5 channel's turns reach CopilotKit Intelligence (threads, learning) when a key is
 // set? A direct adapter's turns skip Intelligence (docs/channel.md). Here the channel's agent is
 // CopilotKit's own runtime endpoint instead of the PS5 agent: the runtime (Intelligence mode,
 // loopback only) records each turn as a thread and runs it through IntelligenceAgentRunner,
@@ -37,7 +37,7 @@ const runtime = new CopilotRuntime({
 });
 const listener = createCopilotNodeListener({ runtime });
 await new Promise<void>((resolve) => createServer(listener).listen(runtimePort, "127.0.0.1", resolve));
-console.log(`[spike] CopilotKit runtime (Intelligence) on ${runtimeUrl}`);
+console.log(`[eval] CopilotKit runtime (Intelligence) on ${runtimeUrl}`);
 
 const channel = createChannel({
   name: "ps5-agentic-ui",
@@ -50,4 +50,4 @@ channel.onMessage(async ({ thread }) => {
 });
 handlePs5Actions(channel);
 await (channel as unknown as { ɵruntime: { start(): Promise<void> } }).ɵruntime.start();
-console.log("[spike] channel ready");
+console.log("[eval] channel ready");

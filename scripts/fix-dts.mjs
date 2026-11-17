@@ -1,4 +1,5 @@
-// Post-process the emitted declarations: rewrite relative .ts import/export specifiers to .js, which
+// Usage: node scripts/fix-dts.mjs <dist dir>
+// Post-process a package's emitted declarations: rewrite relative .ts import/export specifiers to .js, which
 // TypeScript resolves to the sibling .d.ts. tsc keeps the repo's .ts extensions in the .d.ts (and
 // rewriteRelativeImportExtensions doesn't apply under emitDeclarationOnly), which would break type
 // resolution for a consumer that imports this package.
@@ -16,4 +17,4 @@ function walk(dir) {
   }
 }
 
-walk(new URL("./dist", import.meta.url).pathname);
+walk(process.argv[2] ?? "dist");

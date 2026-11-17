@@ -1,20 +1,21 @@
-// Spike 04: domain tools in the loop.
+// Domain tools in the loop.
 //
-// The agent gets intent tools (UI, spike 01) plus domain tools that the server runs against a
+// The agent gets intent tools (UI, as eval/catalog-eval) plus domain tools that the server runs against a
 // simulated console (Wi-Fi, models, saves, profile). One run = model calls until the model shows
 // a screen or answers in text, like CopilotKit's BuiltInAgent: domain tools execute server-side
 // and their results go straight back to the model within the same run; an intent tool renders a
 // surface and ends the run. A scripted player answers each surface, and the press goes back the
-// CopilotKit way (log_a2ui_event), as in spike 02.
+// CopilotKit way (log_a2ui_event), as in eval/multiturn.
 //
 // Secrets: when the player types into a password keyboard, the server keeps the value and the
 // model only sees a handle (secret://N). Domain tools resolve handles server-side.
 //
-// Usage: LLM_API_KEY=... node eval/domain-tools/run.ts [--models a,b] [--only id,id] [--repeat n]
+// Usage: LLM_API_KEY=... LLM_MODEL=... node eval/domain-tools/run.ts [--models a,b] [--only id,id] [--repeat n]
 import { mkdirSync, writeFileSync } from "node:fs";
 import { intentTools, toA2UI } from "../../runtime/intent-tools.ts";
 import { validateSurface } from "../../runtime/validate.ts";
 import { Ajv } from "ajv";
+import { arg, BASE_URL, EXTRA_BODY, KEY, models } from "../lib/env.ts";
 
 // The runtime checks intent-tool arguments against their schema before rendering; a bad call
 // goes back to the model as a tool error within the same run (like CopilotKit's A2UI retries).
@@ -22,16 +23,8 @@ const ajv = new Ajv({ strict: false, allErrors: true });
 const checkArgs = new Map(intentTools.map((t) => [t.name, ajv.compile(t.parameters)]));
 const MIN_ITEMS: Record<string, string> = { show_menu: "items", show_shelf: "rows", show_pages: "pages" };
 
-const arg = (name: string, fallback: string) => {
-  const i = process.argv.indexOf(`--${name}`);
-  return i > 0 ? process.argv[i + 1] : fallback;
-};
-const models = arg("models", "MiniMax-M3,MiniMax-M3.1-Flash").split(",");
 const only = arg("only", "").split(",").filter(Boolean);
 const repeat = Number(arg("repeat", "3"));
-const BASE_URL = process.env.LLM_BASE_URL ?? "https://api.minimax.io/v1";
-const KEY = process.env.LLM_API_KEY;
-if (!KEY) throw new Error("set LLM_API_KEY (point LLM_BASE_URL at the provider; defaults to MiniMax direct)");
 // Fixes under test for dead ends after errors: actionable error results, and/or a UI rule in the base prompt.
 const variant = arg("variant", "baseline") as "baseline" | "errors" | "rule" | "both";
 const actionableErrors = variant === "errors" || variant === "both";
@@ -284,7 +277,7 @@ async function complete(model: string, messages: Json[]) {
       res = await fetch(`${BASE_URL}/chat/completions`, {
         method: "POST",
         headers: { "content-type": "application/json", authorization: `Bearer ${KEY}` },
-        body: JSON.stringify({ model, messages, tools: ALL_TOOLS, tool_choice: "auto", max_tokens: 8000, ...(BASE_URL.includes("minimax") ? { reasoning_split: true } : {}) }),
+        body: JSON.stringify({ model, messages, tools: ALL_TOOLS, tool_choice: "auto", max_tokens: 8000, ...EXTRA_BODY }),
         signal: AbortSignal.timeout(300_000),
       });
       body = await res.json().catch(() => ({}));

@@ -13,7 +13,7 @@ shift
 IMAGE=ps5-agentic-ui/payload-dev:0.41.1
 
 # The console app embeds the agent runtime bundle; esbuild runs here, not in the container.
-# It also links ggml + ggml-vulkan (on-console STT, finding 25); build those libs if missing.
+# It also links ggml + ggml-vulkan (on-console STT); build those libs if missing.
 if [[ "$NAME" == console ]]; then
   (cd "$ROOT" && pnpm -s build:agent-js >/dev/null)
   "$ROOT/scripts/ps5-ggml.sh"

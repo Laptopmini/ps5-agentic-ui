@@ -1,19 +1,15 @@
-// Spike 05: runtime hardening on the shared runtime (runtime/llm.ts).
+// Runtime hardening, on the scripted-session harness (eval/lib/session.ts).
 //   gate     — delete_save behind a runtime approval gate vs. model-asked confirms; double confirms.
 //   fault    — the first screen of each flow is rejected (render_failed): does the model re-show it?
 //   session  — five tasks in one conversation: do later tasks still work as context grows?
 //
-// Usage: LLM_API_KEY=... node eval/hardening/run.ts --part gate|fault|session [--models a,b] [--repeat n]
+// Usage: LLM_API_KEY=... LLM_MODEL=... node eval/hardening/run.ts --part gate|fault|session [--models a,b] [--repeat n]
 import { mkdirSync, writeFileSync } from "node:fs";
-import { freshConsole, type Console } from "../../runtime/console-sim.ts";
-import { BASE_PROMPT, CONFIRM_RULE, GATE_RULE, pool, runSession, UI_RULE, type Options, type SessionTrace, type Task } from "../../runtime/llm.ts";
+import { freshConsole, type Console } from "../../server/console-sim.ts";
+import { BASE_PROMPT, CONFIRM_RULE, GATE_RULE, pool, runSession, UI_RULE, type Options, type SessionTrace, type Task } from "../lib/session.ts";
+import { arg, models } from "../lib/env.ts";
 
-const arg = (name: string, fallback: string) => {
-  const i = process.argv.indexOf(`--${name}`);
-  return i > 0 ? process.argv[i + 1] : fallback;
-};
 const part = arg("part", "gate");
-const models = arg("models", "MiniMax-M3,MiniMax-M3.1-Flash").split(",");
 const repeat = Number(arg("repeat", "3"));
 
 interface Case { id: string; setup: string; tasks: Task[]; opts: Omit<Options, "model">; check: (t: SessionTrace, c: Console) => string[]; metrics?: (t: SessionTrace) => Record<string, number> }
@@ -126,10 +122,10 @@ writeFileSync(new URL(`${part}-${stamp}.json`, dir), JSON.stringify(results, nul
 const groups = new Map<string, Result[]>();
 for (const r of results) groups.set(`${r.setup} | ${r.id}`, [...(groups.get(`${r.setup} | ${r.id}`) ?? []), r]);
 const metricNames = [...new Set(results.flatMap((r) => Object.keys(r.metrics)))];
-console.log(`\n| setup | case | M3 | Flash |${metricNames.map((m) => ` ${m} |`).join("")}\n|---|---|---|---|${metricNames.map(() => "---|").join("")}`);
+console.log(`\n| setup | case |${models.map((m) => ` ${m} |`).join("")}${metricNames.map((m) => ` ${m} |`).join("")}\n|---|---|${models.map(() => "---|").join("")}${metricNames.map(() => "---|").join("")}`);
 for (const [k, rs] of groups) {
   const pass = (m: string) => { const x = rs.filter((r) => r.model === m); return `${x.filter((r) => r.ok).length}/${x.length}`; };
-  console.log(`| ${k} | ${pass("MiniMax-M3")} | ${pass("MiniMax-M3.1-Flash")} |${metricNames.map((m) => ` ${rs.reduce((n, r) => n + (r.metrics[m] ?? 0), 0)} |`).join("")}`);
+  console.log(`| ${k} |${models.map((m) => ` ${pass(m)} |`).join("")}${metricNames.map((m) => ` ${rs.reduce((n, r) => n + (r.metrics[m] ?? 0), 0)} |`).join("")}`);
 }
 console.log("\nFailures:");
 for (const r of results.filter((r) => !r.ok)) console.log(`✗ ${r.setup} ${r.id} ${r.model}#${r.run}: ${r.problems.join(" | ")}`);

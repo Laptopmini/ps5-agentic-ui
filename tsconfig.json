@@ -6,9 +6,17 @@
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "noEmit": true,
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "skipLibCheck": true,
     "strict": false
   },
-  "include": ["runtime/**/*.ts", "server/**/*.ts", "eval/**/*.ts"]
+  "include": [
+    "runtime/**/*.ts",
+    "server/**/*.ts",
+    "eval/**/*.ts",
+    "scripts/**/*.ts",
+    "renderer/fixtures/*.ts"
+  ]
 }

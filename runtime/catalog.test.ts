@@ -1,4 +1,4 @@
-// Catalog ⇄ renderer ⇄ intent-tools self-consistency (M7). The catalog is the enforceable contract
+// Catalog ⇄ renderer ⇄ intent-tools self-consistency. The catalog is the enforceable contract
 // between the agent and the renderer; this keeps it from drifting. It checks that every renderer
 // fixture (a real surface the renderer draws) validates against the catalog, and that every intent
 // tool's own sample output does too — so a component the renderer gains (e.g. Stats) has to be

@@ -1,9 +1,9 @@
-// Re-validate saved results after undoing MiniMax's tool-argument corruption
+// Re-validate saved results after undoing provider damage to tool arguments
 // ({"item":[...]} -> [...], "" -> [] for array fields), to separate model errors from provider damage.
 import { readFileSync, readdirSync } from "node:fs";
 import { validateSurface } from "../../runtime/validate.ts";
 import { scenarios } from "./scenarios.ts";
-import { repairMiniMaxArgs as normalize } from "../../runtime/provider-quirks.ts";
+import { repairToolArgs as normalize } from "../../runtime/provider-quirks.ts";
 
 const dir = new URL("./results/raw/", import.meta.url);
 const file = process.argv[2] ?? readdirSync(dir).filter((f) => f.endsWith(".json")).sort().pop()!;

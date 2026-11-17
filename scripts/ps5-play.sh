@@ -17,14 +17,14 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 HOST="${PS5_HOST:?set PS5_HOST to the console IP}"
 PORT=${PORT:-8790}
-MODEL=${MODEL:-${LLM_MODEL:-minimax/minimax-m3}}
+MODEL=${MODEL:-${LLM_MODEL:-}}
 DIR=/data/homebrew/PS5AgenticUI
 
-if [[ -z "${LLM_API_KEY:-}" ]]; then
-  echo "Set LLM_API_KEY (and LLM_MODEL) in the environment. OpenRouter by default; set LLM_BASE_URL for another provider." >&2; exit 1
+if [[ -z "${LLM_API_KEY:-}" || -z "${MODEL:-${LLM_MODEL:-}}" ]]; then
+  echo "Set LLM_API_KEY and LLM_MODEL in the environment: a key and a tool-calling model id for any OpenAI-compatible endpoint. OpenRouter by default; set LLM_BASE_URL for another." >&2; exit 1
 fi
 model_env=()
-for v in LLM_API_KEY LLM_BASE_URL LLM_MODEL; do [[ -n "${!v:-}" ]] && model_env+=("$v=${!v}"); done
+for v in LLM_API_KEY LLM_BASE_URL LLM_MODEL LLM_EXTRA_BODY; do [[ -n "${!v:-}" ]] && model_env+=("$v=${!v}"); done
 
 # This Mac's address on the console's network.
 IFACE=$(route -n get "$HOST" 2>/dev/null | awk '/interface:/ {print $2}')

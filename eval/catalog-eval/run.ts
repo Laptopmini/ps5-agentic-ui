@@ -1,4 +1,4 @@
-// Spike 01: can a model drive native PS5 UI through the PS5 A2UI catalog?
+// Can a model drive native PS5 UI through the PS5 A2UI catalog?
 //
 // Mode "a2ui": exactly what CopilotKit's runtime does for A2UI (runtime-go/a2ui.go):
 //   the catalog arrives as an "A2UI Component Schema" context entry, the runtime injects a
@@ -6,24 +6,17 @@
 //   BuiltInAgent appends context to the system prompt as "description:\nvalue".
 // Mode "intent": flat intent tools (intent-tools.ts) that the server turns into A2UI.
 //
-// Usage: LLM_API_KEY=... node eval/catalog-eval/run.ts [--models a,b] [--modes a2ui,intent] [--only id,id] [--repeat n]
+// Usage: LLM_API_KEY=... LLM_MODEL=... node eval/catalog-eval/run.ts [--models a,b] [--modes a2ui,intent] [--only id,id] [--repeat n]
 import { mkdirSync, writeFileSync } from "node:fs";
 import { scenarios } from "./scenarios.ts";
 import { intentTools, toA2UI } from "../../runtime/intent-tools.ts";
 import { commonTypes, ps5Catalog, validateSurface, type Report } from "../../runtime/validate.ts";
+import { arg, BASE_URL, EXTRA_BODY, KEY, models } from "../lib/env.ts";
 
-const arg = (name: string, fallback: string) => {
-  const i = process.argv.indexOf(`--${name}`);
-  return i > 0 ? process.argv[i + 1] : fallback;
-};
-const models = arg("models", "MiniMax-M3,MiniMax-M3.1-Flash").split(",");
 type Mode = "a2ui" | "a2ui-defs" | "intent";
 const modes = arg("modes", "a2ui,a2ui-defs,intent").split(",") as Mode[];
 const only = arg("only", "").split(",").filter(Boolean);
 const repeat = Number(arg("repeat", "1"));
-const BASE_URL = process.env.LLM_BASE_URL ?? "https://api.minimax.io/v1";
-const KEY = process.env.LLM_API_KEY;
-if (!KEY) throw new Error("set LLM_API_KEY (point LLM_BASE_URL at the provider; defaults to MiniMax direct)");
 
 const SYSTEM =
   "You are the assistant built into a PlayStation 5, shown on a TV and operated with a DualSense controller from the couch. " +
@@ -53,7 +46,7 @@ function request(model: string, mode: Mode, prompt: string) {
       ? SYSTEM
       : `${SYSTEM}\n## Context from the application\n${SCHEMA_DESCRIPTION}:\n${mode === "a2ui" ? catalogValue : catalogValueWithDefs}\n${GUIDE_DESCRIPTION}:\n${GUIDE}\n`;
   const tools = (mode === "intent" ? intentTools : [RENDER_A2UI]).map((t) => ({ type: "function", function: t }));
-  return { model, messages: [{ role: "system", content: system }, { role: "user", content: prompt }], tools, tool_choice: "auto", max_tokens: 12000, ...(BASE_URL.includes("minimax") ? { reasoning_split: true } : {}) };
+  return { model, messages: [{ role: "system", content: system }, { role: "user", content: prompt }], tools, tool_choice: "auto", max_tokens: 12000, ...EXTRA_BODY };
 }
 
 interface Call { name: string; args: unknown; parseError?: string; report?: Report }

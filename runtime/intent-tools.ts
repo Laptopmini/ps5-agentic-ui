@@ -1,6 +1,9 @@
 // Flat "intent tools" for small models: simple schemas (type, enum, required, items only,
 // the subset ProsperoAI's tool-call validator accepts). The server turns each call into
 // A2UI 1.0 components on the PS5 catalog; `toA2UI` is that translation.
+import { Ajv } from "ajv";
+import type { ValidateFunction } from "ajv";
+
 type Json = Record<string, unknown>;
 /** The catalog's named haptic effects ($defs.HapticEffect). */
 export const HAPTIC_EFFECTS = ["tick", "confirm", "success", "warning", "error", "attention"] as const;
@@ -248,4 +251,19 @@ export function toA2UI(name: string, a: Json): { components: Json[]; data: Json 
     default:
       throw new Error(`unknown intent tool ${name}`);
   }
+}
+
+// ---------- argument checks ----------
+
+const ajv = new Ajv({ strict: false, allErrors: true });
+const checkArgs = new Map<string, ValidateFunction>([...intentTools, ...deviceTools].map((t): [string, ValidateFunction] => [t.name, ajv.compile(t.parameters)]));
+const MIN_ITEMS: Record<string, string> = { show_menu: "items", show_shelf: "rows", show_pages: "pages" };
+
+/** What's wrong with an intent or device tool call's arguments (sent back to the model), or null. */
+export function intentProblem(name: string, args: Json): string | null {
+  const check = checkArgs.get(name)!;
+  if (!check(args)) return ajv.errorsText(check.errors);
+  const list = MIN_ITEMS[name];
+  if (list && !(Array.isArray(args[list]) && (args[list] as unknown[]).length > 0)) return `${list} must not be empty`;
+  return null;
 }

@@ -2,7 +2,7 @@
 // and bodies that aren't streams (errors) passed through.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { StreamedReply } from "./llm.ts";
+import { StreamedReply } from "./model.ts";
 
 const sse = (...events: object[]) => events.map((e) => `data: ${JSON.stringify(e)}\n\n`).join("") + "data: [DONE]\n\n";
 const delta = (d: object, finish: string | null = null) => ({ choices: [{ index: 0, delta: d, finish_reason: finish }] });
@@ -45,7 +45,7 @@ test("tool calls are put together from their pieces", () => {
   assert.equal(result.choices[0].finish_reason, "tool_calls");
 });
 
-test("a body that isn't a stream (MiniMax's rate limit) comes back as it is", () => {
+test("a body that isn't a stream (a rate limit) comes back as it is", () => {
   const body = JSON.stringify({ base_resp: { status_code: 1002, status_msg: "rate limit" } });
   const { shown, result } = read(body, 8);
   assert.equal(shown, "");

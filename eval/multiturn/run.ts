@@ -1,29 +1,22 @@
-// Spike 02: multi-turn flows with intent tools, the CopilotKit way.
+// Multi-turn flows with intent tools, the CopilotKit way.
 //
 // Each turn is one run. The model answers with text and/or intent tools; the server turns
-// intent calls into A2UI (spike 01) and the run ends there, as when CopilotKit renders a
+// intent calls into A2UI (as eval/catalog-eval) and the run ends there, as when CopilotKit renders a
 // surface. Each intent call gets the tool result CopilotKit synthesizes: {"status":"rendered"}.
 // A scripted player then presses a button on that surface. The action goes back the way
 // CopilotKit's runtime does it (runtime-go/a2ui.go processA2UIAction): an assistant tool call
 // `log_a2ui_event(<userAction>)` plus a tool result `User performed action "…" on surface "…"
 // (component: …). Context: {…}`. Then the next run starts.
 //
-// Usage: LLM_API_KEY=... node eval/multiturn/run.ts [--models a,b] [--only id,id] [--repeat n]
+// Usage: LLM_API_KEY=... LLM_MODEL=... node eval/multiturn/run.ts [--models a,b] [--only id,id] [--repeat n]
 //        LLM_BASE_URL=http://localhost:1234/v1 LLM_API_KEY=x node eval/multiturn/run.ts --models <id>
 import { mkdirSync, writeFileSync } from "node:fs";
 import { intentTools, toA2UI } from "../../runtime/intent-tools.ts";
 import { validateSurface } from "../../runtime/validate.ts";
+import { arg, BASE_URL, EXTRA_BODY, KEY, models } from "../lib/env.ts";
 
-const arg = (name: string, fallback: string) => {
-  const i = process.argv.indexOf(`--${name}`);
-  return i > 0 ? process.argv[i + 1] : fallback;
-};
-const models = arg("models", "MiniMax-M3,MiniMax-M3.1-Flash").split(",");
 const only = arg("only", "").split(",").filter(Boolean);
 const repeat = Number(arg("repeat", "3"));
-const BASE_URL = process.env.LLM_BASE_URL ?? "https://api.minimax.io/v1";
-const KEY = process.env.LLM_API_KEY;
-if (!KEY) throw new Error("set LLM_API_KEY (point LLM_BASE_URL at the provider; defaults to MiniMax direct)");
 
 const SYSTEM =
   "You are the assistant built into a PlayStation 5, shown on a TV and operated with a DualSense controller from the couch. " +
@@ -196,7 +189,7 @@ async function complete(model: string, messages: Json[]) {
           tools: intentTools.map((t) => ({ type: "function", function: t })),
           tool_choice: "auto",
           max_tokens: 8000,
-          ...(BASE_URL.includes("minimax") ? { reasoning_split: true } : {}),
+          ...EXTRA_BODY,
         }),
         signal: AbortSignal.timeout(300_000),
       });

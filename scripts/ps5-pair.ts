@@ -1,8 +1,8 @@
 // Send a model key to the console's setup screen from this computer: the same encrypted push as
 // the setup page (renderer/assets/pair.html), for when the key is already here.
 //
-//   node scripts/ps5-pair.ts --host 192.168.0.56 [--provider openrouter|minimax|server|channel]
-//                            [--model id] [--url http://<mac>:8790/agent | http://<mac>:8792]
+//   node scripts/ps5-pair.ts --host 192.168.0.56 [--provider openrouter|custom|server|channel]
+//                            [--model id] [--url https://…/v1 | http://<mac>:8790/agent | http://<mac>:8792]
 //                            [--code 123456]
 //
 // The key comes from the environment (LLM_API_KEY for a model provider, AGENT_TOKEN for
@@ -27,8 +27,8 @@ const arg = (name: string, fallback = "") => {
 const host = arg("host", process.env.PS5_HOST ?? "");
 const port = Number(arg("port", "8791"));
 const provider = arg("provider", "openrouter");
-if (!host || !["openrouter", "minimax", "server", "channel"].includes(provider)) {
-  console.error("usage: node scripts/ps5-pair.ts --host <console ip> [--provider openrouter|minimax|server|channel] [--model id] [--url url] [--code 123456] [--key-stdin]");
+if (!host || !["openrouter", "custom", "server", "channel"].includes(provider)) {
+  console.error("usage: node scripts/ps5-pair.ts --host <console ip> [--provider openrouter|custom|server|channel] [--model id] [--url url] [--code 123456] [--key-stdin]");
   process.exit(2);
 }
 
@@ -37,7 +37,7 @@ async function readStdin() {
   for await (const chunk of process.stdin) text += chunk;
   return text.trim();
 }
-const envName = { openrouter: "LLM_API_KEY", minimax: "LLM_API_KEY", server: "AGENT_TOKEN", channel: "PS5_CHANNEL_TOKEN" }[provider]!;
+const envName = { openrouter: "LLM_API_KEY", custom: "LLM_API_KEY", server: "AGENT_TOKEN", channel: "PS5_CHANNEL_TOKEN" }[provider]!;
 const remote = provider === "server" || provider === "channel";
 const key = args.includes("--key-stdin") ? await readStdin() : (process.env[envName] ?? "");
 if (!key) {
@@ -67,7 +67,7 @@ if (!code) {
 
 const mine = nacl.box.keyPair();
 const nonce = nacl.randomBytes(nacl.box.nonceLength);
-const message = { code, provider, key, model: remote ? "" : arg("model"), url: remote ? arg("url") : "" };
+const message = { code, provider, key, model: remote ? "" : arg("model", process.env.LLM_MODEL ?? ""), url: remote ? arg("url") : provider === "custom" ? arg("url", process.env.LLM_BASE_URL ?? "") : "" };
 const box = nacl.box(new TextEncoder().encode(JSON.stringify(message)), nonce, pk, mine.secretKey);
 const b64 = (b: Uint8Array) => Buffer.from(b).toString("base64");
 const res = await fetch(`${base}/pair`, {

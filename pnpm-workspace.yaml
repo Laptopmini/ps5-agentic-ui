@@ -1,0 +1,8 @@
+packages:
+  - runtime
+  - channel
+
+# Install scripts: esbuild fetches its binary; @scarf/scarf is install analytics and stays off.
+allowBuilds:
+  esbuild: true
+  "@scarf/scarf": false

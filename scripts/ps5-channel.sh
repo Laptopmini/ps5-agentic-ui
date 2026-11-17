@@ -25,7 +25,7 @@
 #   default 8793) as code CHANNEL_CODE (default ps5-agentic-ui). Only that key and the code go to
 #   the channel. Without it, the channel calls the agent directly (no Intelligence).
 # - CopilotKit's anonymous telemetry is off (COPILOTKIT_TELEMETRY_DISABLED=true).
-# - PRESENCE=1 (M4 spike): also sends the background payload (payload/presence) to the console's
+# - PRESENCE=1: also sends the background payload (payload/presence) to the console's
 #   ELF loader (:9021), and keeps the channel up after the app closes (Ctrl-C to stop). With the
 #   app closed, what the agent says becomes a toast whose button opens the app; try "remind me in
 #   60 seconds to …", then close the app (or start a game).
@@ -38,14 +38,14 @@ HOST="${PS5_HOST:?set PS5_HOST to the console IP}"
 AGENT_PORT=${AGENT_PORT:-8790}
 PORT=${PORT:-8792}
 RUNTIME_PORT=${RUNTIME_PORT:-8793}
-MODEL=${MODEL:-${LLM_MODEL:-minimax/minimax-m3}}
+MODEL=${MODEL:-${LLM_MODEL:-}}
 DIR=/data/homebrew/PS5AgenticUI
 
-if [[ -z "${LLM_API_KEY:-}" ]]; then
-  echo "Set LLM_API_KEY (and LLM_MODEL) in the environment. OpenRouter by default; set LLM_BASE_URL for another provider." >&2; exit 1
+if [[ -z "${LLM_API_KEY:-}" || -z "${MODEL:-${LLM_MODEL:-}}" ]]; then
+  echo "Set LLM_API_KEY and LLM_MODEL in the environment: a key and a tool-calling model id for any OpenAI-compatible endpoint. OpenRouter by default; set LLM_BASE_URL for another." >&2; exit 1
 fi
 model_env=()
-for v in LLM_API_KEY LLM_BASE_URL LLM_MODEL; do [[ -n "${!v:-}" ]] && model_env+=("$v=${!v}"); done
+for v in LLM_API_KEY LLM_BASE_URL LLM_MODEL LLM_EXTRA_BODY; do [[ -n "${!v:-}" ]] && model_env+=("$v=${!v}"); done
 CHANNEL_CODE=${CHANNEL_CODE:-ps5-agentic-ui}
 
 IFACE=$(route -n get "$HOST" 2>/dev/null | awk '/interface:/ {print $2}')

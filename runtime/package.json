@@ -1,0 +1,56 @@
+{
+  "name": "ps5-a2ui-agent",
+  "version": "1.0.0",
+  "description": "An AG-UI agent runtime that answers with native PlayStation 5 screens: A2UI 1.0 surfaces on the PS5 catalog, controller feedback, an approval gate and secret handles. Any OpenAI-compatible model.",
+  "license": "MIT",
+  "author": "Laptopmini <laptopmini@gmail.com>",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/runtime/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/runtime/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "esbuild index.ts --bundle --format=esm --platform=node --packages=external --outfile=dist/index.js && tsc -p tsconfig.json && node ../scripts/fix-dts.mjs dist",
+    "prepublishOnly": "pnpm run build",
+    "test": "node --test *.test.ts"
+  },
+  "dependencies": {
+    "ajv": "^8.20.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "esbuild": "0.28.2",
+    "typescript": "^7.0.2"
+  },
+  "keywords": [
+    "ag-ui",
+    "a2ui",
+    "agent",
+    "generative-ui",
+    "agentic-ui",
+    "ps5",
+    "playstation",
+    "copilotkit",
+    "llm",
+    "tool-calling"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Laptopmini/ps5-agentic-ui.git",
+    "directory": "runtime"
+  },
+  "homepage": "https://github.com/Laptopmini/ps5-agentic-ui/tree/main/runtime#readme",
+  "bugs": "https://github.com/Laptopmini/ps5-agentic-ui/issues",
+  "engines": {
+    "node": ">=20"
+  }
+}

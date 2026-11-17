@@ -1,36 +1,22 @@
-// The agent runtime the server and the console run: the PS5 server's run loop, in TypeScript for speed of
-// iteration. One run = model calls until the model shows a screen or answers in text (like
-// CopilotKit's BuiltInAgent). Domain tools run server-side within the run. Intent tools become
-// A2UI surfaces and end the run. A scripted player answers surfaces; presses go back the CopilotKit
-// way (log_a2ui_event). Features under test:
+// The scripted-session harness the evals share (eval/hardening): one conversation of several
+// tasks against the simulated console, with a scripted player answering the agent's screens.
+// One run = model calls until the model shows a screen or answers in text (like CopilotKit's
+// BuiltInAgent). Domain tools run within the run; intent tools become A2UI surfaces and end it;
+// presses go back the CopilotKit way (log_a2ui_event). What it exercises:
 //   - argument checks on intent calls, rejected calls go back as tool errors within the run;
 //   - secret handles for password keyboards;
 //   - an approval gate: tools marked `approval` pause the run on a runtime-made confirm, then run
 //     or are denied, and the run resumes with the tool result;
 //   - fault injection on screens (to exercise the retry path).
-import { Ajv } from "ajv";
-import type { ValidateFunction } from "ajv";
-import { deviceTools, intentTools, toA2UI, toFunctionCalls } from "./intent-tools.ts";
-import { validateSurface } from "./validate.ts";
-import { type Console, domainTools, execDomain, WIFI_PASSWORD } from "./console-sim.ts";
+// The live agent is runtime/thread.ts; this mirrors its loop so the evals can script both sides.
+import { deviceTools, intentProblem, intentTools, toA2UI, toFunctionCalls } from "../../runtime/intent-tools.ts";
+import { modelFromEnv, openAICompatible } from "../../runtime/model.ts";
+import { validateSurface } from "../../runtime/validate.ts";
+import { type Console, domainTools, execDomain, WIFI_PASSWORD } from "../../server/console-sim.ts";
+
+export { BASE_PROMPT, CONFIRM_RULE, GATE_RULE, HONESTY_RULE, UI_RULE } from "../../runtime/prompts.ts";
 
 type Json = Record<string, any>;
-
-export const BASE_PROMPT =
-  "You are the assistant built into a PlayStation 5, shown on a TV and operated with a DualSense controller from the couch. " +
-  "There is no mouse and no physical keyboard. Answer briefly, and only what the user actually asked — don't volunteer adjacent facts (if they ask about storage, answer about storage, not the model or firmware). " +
-  "When a screen, a choice, text entry or a confirmation helps the user, render native UI with your tools instead of describing it in text. " +
-  "The TV cannot render markdown: never put a table, a list, stats or structured data in your text or as markdown. Show structured data with a tool — show_stats for numbers and metrics (storage, counts, sizes, times) as a dashboard of value tiles, show_menu for a list of items to choose from, show_info for a few short lines of prose, show_pages for sections, and show_progress with a 0-1 value for a single proportion. Keep any plain text to a sentence or two of explanation around the UI, not the data itself. " +
-  "After you show something the user must answer, stop and wait: their answer arrives as a log_a2ui_event result.\n" +
-  "Use the console tools to read and change the console. Never say something happened unless a tool result says so; if a tool fails, tell the user and offer a way forward. " +
-  "Passwords typed on a password keyboard reach you as a secret:// handle: pass the handle as-is to the tool that needs it, never ask the user to say or show a password.";
-export const UI_RULE =
-  " `notify` is only for news that needs no answer. After a failure the user can fix (wrong password, invalid input, not enough memory), show something they can act on: a keyboard, a menu or a confirm. Never change something the user didn't choose. When the user picks a game (a tile_select), don't act on it right away: ask what they'd like to do with it, as a show_menu of what your tools can do for that game (for example how long they've played it, its saves, starting it), saying which of those aren't available yet. Offer 2 or 3 next requests the user is likely to make with most answers: in the screen tool's followUps when you show a screen that needs no answer, else by calling suggest_follow_ups in the same message as your text.";
-export const HONESTY_RULE =
-  " Only show games, saves, networks or models that a tool returned, and only show progress or success for something a tool actually did. If no tool can do what the user asks (for example installing or buying a game), say so in one sentence instead of pretending. When a tool gives a game an icon, pass it as the tile's image so games look the same wherever they appear.";
-export const CONFIRM_RULE = " Ask with `confirm` (destructive=true) before deleting anything.";
-export const GATE_RULE =
-  " Tools that need approval (delete_save, launch_game over a running game) are approved by the console itself: call them directly instead of asking with `confirm` first. If the result is denied_by_user, don't call it again unless the user asks.";
 
 export interface Options {
   model: string;
@@ -62,208 +48,13 @@ export interface SessionTrace {
   log: string[];
 }
 
-// ---------- model ----------
-
-const BASE_URL = process.env.LLM_BASE_URL ?? "https://openrouter.ai/api/v1";
-const KEY = process.env.LLM_API_KEY;
-
-/**
- * One model call. `onRetry` is told before each wait (rate limit or transient error), e.g. to show
- * "retrying" in the UI. With `onText`, the reply streams: visible text (outside `<think>` blocks)
- * goes to `onText` as it arrives, and the result has the same shape as without it. A call is only
- * retried while nothing has been shown.
- */
-export async function complete(model: string, messages: Json[], tools: Json[], onRetry?: (waitMs: number, reason: string) => void, onText?: (delta: string) => void) {
-  if (!KEY) throw new Error("set LLM_API_KEY (and LLM_MODEL); any OpenAI-compatible provider, OpenRouter by default. Override the endpoint with LLM_BASE_URL.");
-  for (let attempt = 0; ; attempt++) {
-    let status = 0;
-    let body: any;
-    let shown = false;
-    try {
-      const request = {
-        method: "POST",
-        headers: { "content-type": "application/json", authorization: `Bearer ${KEY}` },
-        body: JSON.stringify({ model, messages, tools, tool_choice: "auto", max_tokens: 8000, ...(BASE_URL.includes("minimax") ? { reasoning_split: true } : {}), ...(onText ? { stream: true } : {}) }),
-        signal: AbortSignal.timeout(300_000),
-      };
-      if (onText) {
-        const reply = new StreamedReply((delta) => {
-          shown = true;
-          onText(delta);
-        });
-        status = await fetchChunks(`${BASE_URL}/chat/completions`, request, (chunk) => reply.feed(chunk));
-        body = reply.result();
-      } else {
-        const res = await fetch(`${BASE_URL}/chat/completions`, request);
-        status = res.status;
-        body = await res.json().catch(() => ({}));
-      }
-    } catch (e) {
-      body = { error: String((e as Error).cause ?? e) };
-    }
-    const ok = status >= 200 && status < 300;
-    if (ok && !body?.base_resp?.status_code && !body?.error) return body;
-    const limited = status === 429 || body?.base_resp?.status_code === 1002;
-    const transient = !status || limited || status >= 500;
-    if (!transient || attempt >= 5 || shown) throw new Error(`${status || "network"} ${JSON.stringify(body).slice(0, 300)}`);
-    const waitMs = limited ? 15_000 * 2 ** Math.min(attempt, 3) : 2000 * (attempt + 1);
-    onRetry?.(waitMs, limited ? "rate_limited" : status ? `http_${status}` : "network");
-    await new Promise((r) => setTimeout(r, waitMs));
-  }
-}
-
-/**
- * POST and hand the response body to `onChunk` as it arrives; resolves with the HTTP status. On
- * the console (QuickJS) the host's fetch delivers the chunks (__host.fetch's chunk callback).
- */
-async function fetchChunks(url: string, init: Json, onChunk: (text: string) => void): Promise<number> {
-  const host = (globalThis as any).__fetchChunks;
-  if (host) return host(url, init, onChunk);
-  const res = await fetch(url, init);
-  const reader = res.body!.getReader();
-  const decoder = new TextDecoder();
-  for (;;) {
-    const { value, done } = await reader.read();
-    if (done) break;
-    onChunk(decoder.decode(value, { stream: true }));
-  }
-  onChunk(decoder.decode());
-  return res.status;
-}
-
-/**
- * Reads an OpenAI-compatible streamed reply (server-sent `chat.completion.chunk`s) into the
- * non-streamed shape: { choices: [{ message: { content, tool_calls } }] }. Visible text goes to
- * `onText` as it comes, without `<think>…</think>` and leading whitespace. A body that isn't a
- * stream (an error, or MiniMax's base_resp) is returned as it is.
- */
-export class StreamedReply {
-  private buffer = "";
-  private raw = "";
-  private events = 0;
-  private content = "";
-  private toolCalls: Json[] = [];
-  private finishReason: string | null = null;
-  private pending = "";  // text held back: maybe the start of a <think> tag
-  private inThink = false;
-  private started = false;
-
-  private readonly onText: (delta: string) => void;
-
-  constructor(onText: (delta: string) => void) {
-    this.onText = onText;
-  }
-
-  feed(chunk: string) {
-    if (this.raw.length < 65536) this.raw += chunk;
-    this.buffer += chunk;
-    for (let i; (i = this.buffer.indexOf("\n")) >= 0; ) {
-      const line = this.buffer.slice(0, i).replace(/\r$/, "");
-      this.buffer = this.buffer.slice(i + 1);
-      if (!line.startsWith("data:")) continue;
-      const data = line.slice(5).trim();
-      if (!data || data === "[DONE]") continue;
-      let event: Json;
-      try {
-        event = JSON.parse(data);
-      } catch {
-        continue;
-      }
-      this.events++;
-      if (event.base_resp?.status_code) this.raw = data;  // an error inside the stream
-      const choice = event.choices?.[0];
-      if (!choice) continue;
-      if (choice.finish_reason) this.finishReason = choice.finish_reason;
-      const delta = choice.delta ?? {};
-      if (typeof delta.content === "string" && delta.content) {
-        this.content += delta.content;
-        this.visible(delta.content);
-      }
-      for (const tc of delta.tool_calls ?? []) {
-        const index = tc.index ?? this.toolCalls.length;
-        const call = (this.toolCalls[index] ??= { id: "", type: "function", function: { name: "", arguments: "" } });
-        if (tc.id) call.id = tc.id;
-        if (tc.function?.name) call.function.name += tc.function.name;
-        if (tc.function?.arguments) call.function.arguments += tc.function.arguments;
-      }
-    }
-  }
-
-  result(): Json {
-    if (!this.events || /"base_resp"\s*:\s*\{\s*"status_code"\s*:\s*[1-9]/.test(this.raw)) {
-      try {
-        return JSON.parse(this.raw);
-      } catch {
-        return { error: this.raw.slice(0, 300) || "empty reply" };
-      }
-    }
-    if (!this.inThink && this.pending) this.emit(this.pending);
-    this.pending = "";
-    const toolCalls = this.toolCalls.filter(Boolean);
-    return { choices: [{ message: { role: "assistant", content: this.content, ...(toolCalls.length ? { tool_calls: toolCalls } : {}) }, finish_reason: this.finishReason }] };
-  }
-
-  /** Passes text on, minus <think>…</think> (tags may be split across deltas). */
-  private visible(text: string) {
-    let s = this.pending + text;
-    this.pending = "";
-    for (;;) {
-      if (this.inThink) {
-        const end = s.indexOf("</think>");
-        if (end < 0) {
-          this.pending = s.slice(-7);  // may hold the start of "</think>"
-          return;
-        }
-        s = s.slice(end + 8);
-        this.inThink = false;
-      }
-      const start = s.indexOf("<think>");
-      if (start >= 0) {
-        this.emit(s.slice(0, start));
-        s = s.slice(start + 7);
-        this.inThink = true;
-        continue;
-      }
-      // Hold back a tail that could be the start of "<think>".
-      let keep = 0;
-      for (let k = Math.min(6, s.length); k > 0; k--)
-        if ("<think>".startsWith(s.slice(-k))) {
-          keep = k;
-          break;
-        }
-      this.emit(s.slice(0, s.length - keep));
-      this.pending = s.slice(s.length - keep);
-      return;
-    }
-  }
-
-  private emit(text: string) {
-    if (!this.started) text = text.replace(/^\s+/, "");
-    if (!text) return;
-    this.started = true;
-    this.onText(text);
-  }
-}
-
-// ---------- argument checks ----------
-
-const ajv = new Ajv({ strict: false, allErrors: true });
-const checkArgs = new Map<string, ValidateFunction>([...intentTools, ...deviceTools].map((t): [string, ValidateFunction] => [t.name, ajv.compile(t.parameters)]));
-const MIN_ITEMS: Record<string, string> = { show_menu: "items", show_shelf: "rows", show_pages: "pages" };
-export function intentProblem(name: string, args: Json): string | null {
-  const check = checkArgs.get(name)!;
-  if (!check(args)) return ajv.errorsText(check.errors);
-  const list = MIN_ITEMS[name];
-  if (list && !(Array.isArray(args[list]) && args[list].length > 0)) return `${list} must not be empty`;
-  return null;
-}
-
 // ---------- session ----------
 
 interface Pending { kind: "surface"; name: string; surfaceId: string; components: Json[] }
 interface Approval { kind: "approval"; toolCallId: string; name: string; args: Json; message: string }
 
 export async function runSession(tasks: Task[], c: Console, opts: Options): Promise<SessionTrace> {
+  const complete = openAICompatible(modelFromEnv({ model: opts.model }));
   const tools = domainTools({ approvalGate: opts.approvalGate });
   const toolDefs = [...intentTools, ...deviceTools, ...tools.map(({ approval: _a, progress: _p, ...t }) => t)].map((t) => ({ type: "function", function: t }));
   const isDomain = (n: string) => tools.find((t) => t.name === n);
@@ -292,7 +83,7 @@ export async function runSession(tasks: Task[], c: Console, opts: Options): Prom
       for (let i = 0; ; i++) {
         if (i >= maxCalls) { trace.problems.push(`task ${ti + 1}: more than ${maxCalls} model calls in one run`); break; }
         const started = Date.now();
-        const body = await complete(opts.model, messages, toolDefs);
+        const body = await complete(messages, toolDefs);
         trace.calls.push({ task: ti, promptTokens: body.usage?.prompt_tokens ?? 0, completionTokens: body.usage?.completion_tokens ?? 0, ms: Date.now() - started });
         const msg = body.choices?.[0]?.message ?? {};
         const text = String(msg.content ?? "").replace(/<think>[\s\S]*?<\/think>/g, "").trim();
