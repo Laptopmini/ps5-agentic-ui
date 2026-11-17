@@ -5,7 +5,7 @@
 
 Open-source tooling for **agentic UI on a PlayStation 5**, built on [AG-UI](https://docs.ag-ui.com), [A2UI 1.0](https://a2ui.org) and [CopilotKit](https://docs.copilotkit.ai). An agent answers with native, controller-driven screens instead of text: menus, shelves of tiles, dashboards, the system keyboard, system dialogs, haptics.
 
-![The demo app in a conversation: the agent listed the installed games as a shelf, the player picked one, and the agent answered with a menu](docs/images/conversation.png)
+![The demo app's start screen: suggested questions about the player's games, controller and console, above a text field with Cross for the keyboard and R2 to speak](docs/images/landing.png)
 
 You don't need a PS5 to try it. The renderer and the agent run on a Mac or Linux desktop, and the same code runs on the console.
 
