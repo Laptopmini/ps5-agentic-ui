@@ -9,7 +9,7 @@
 // a message built with Channels' own UI components (rendered to the PS5 catalog by the adapter),
 // and a press on it answers through a Channels action handler. The agent also gets the console's
 // own data as client tools (ps5ConsoleTools: list_games reads the console's installed games). "remind me in 30 seconds to …"
-// posts later, outside any turn: the test for background presence (M4). Close the app first and the
+// posts later, outside any turn: the test for background presence. Close the app first and the
 // console's background payload shows the reminder as a toast.
 //
 // Two ways to run it:
@@ -75,7 +75,7 @@ channel.onMessage(async ({ thread, message }) => {
         children: [
           Header({ children: "Channels on the PS5" }),
           Section({ children: "This message was built with CopilotKit Channels components and drawn by the console as a native screen." }),
-          Fields({ children: [Field({ label: "Adapter", children: "copilotkit-ps5" }), Field({ label: "Catalog", children: "PS5 v0" })] }),
+          Fields({ children: [Field({ label: "Adapter", children: "copilotkit-channels-ps5" }), Field({ label: "Catalog", children: "PS5 v1" })] }),
           Actions({
             children: [
               Button({ value: "native screens", onClick: answer, children: "Native screens" }),

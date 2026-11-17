@@ -590,7 +590,7 @@ function objectSchema(properties: Json = {}, required: string[] = []) {
   return {
     "~standard": {
       version: 1 as const,
-      vendor: "copilotkit-ps5",
+      vendor: "copilotkit-channels-ps5",
       validate: (value: unknown) =>
         value && typeof value === "object" && !Array.isArray(value) ? { value } : { issues: [{ message: "Expected an object" }] },
       jsonSchema: { input: jsonSchema, output: jsonSchema },

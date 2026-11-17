@@ -9,7 +9,9 @@
     "emitDeclarationOnly": true,
     "outDir": "dist",
     "rootDir": "..",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "skipLibCheck": true,
     "strict": false
   },
@@ -18,6 +20,7 @@
     "adapter.ts",
     "render.ts",
     "console-reads.ts",
-    "../runtime/a2ui.ts"
+    "../runtime/a2ui.ts",
+    "../runtime/tools.ts"
   ]
 }

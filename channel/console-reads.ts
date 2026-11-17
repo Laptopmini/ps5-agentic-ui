@@ -80,25 +80,8 @@ export const NOT_YET = [
   },
 ];
 
-/**
- * Follow-up suggestions: up to three short things the player might ask next, shown as buttons
- * under the reply (pressing one sends it as their message). The console gets them as CUSTOM
- * "ps5.suggestions" {prompts}; a new message or run clears them.
- */
-export const FOLLOW_UPS = {
-  tool: "suggest_follow_ups",
-  description:
-    "Offer up to 3 very short follow-ups the user might tap next, in the user's own words and at most ~6 words each (e.g. \"Forza saves?\", \"How full is my disk?\"), shown as small buttons under your reply. Keep them terse — they must fit a button. Call it in the same message as your reply's text, as the last step, when a next step is likely; only suggest what your tools can do.",
-  parameters: {
-    type: "object",
-    properties: { prompts: { type: "array", items: { type: "string" }, description: "2 or 3 prompts, each under 40 characters" } },
-    required: ["prompts"],
-  },
-  /** The prompts as the console takes them: strings, trimmed, at most 3 of up to 80 characters. */
-  clean: (args: Json): string[] =>
-    (Array.isArray(args?.prompts) ? args.prompts : []).filter((p: unknown) => typeof p === "string" && p.trim()).map((p: string) => p.trim().slice(0, 44)).slice(0, 3),
-  event: (prompts: string[]) => ({ type: "CUSTOM", name: "ps5.suggestions", value: { prompts } }),
-};
+// Follow-up suggestions are the agent runtime's (runtime/tools.ts); the channel offers the same tool.
+export { FOLLOW_UPS } from "../runtime/tools.ts";
 
 /**
  * ask_choices: a short question with up to 5 one-tap options for the player. When the app is open
