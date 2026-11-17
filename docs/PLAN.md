@@ -63,7 +63,7 @@ screens, DualSense, system keyboard, dialogs, notifications, HTTPS to the model,
 the PS5 as a CopilotKit channel; background presence; on-console voice (whisper STT on the GPU). The
 **1.0** is cut: a stable catalog (frozen at the `catalog-v1` tag), the CMake target and the two
 npm packages, docs and license. What remains of the release is listing the renderer and the agent
-runtime on the A2UI ecosystem page (see [`going-public.md`](going-public.md)). Next is **OpenDots
+runtime on the A2UI ecosystem page. Next is **OpenDots
 on the PS5** as the external acceptance test. See [`../BACKLOG.md`](../BACKLOG.md) for everything open.
 
 ## Platform constraints (worth knowing)

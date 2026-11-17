@@ -7,8 +7,7 @@ goal and architecture, and the topical docs under [`docs/`](docs/) for the resea
 
 - **A2UI ecosystem listing.** 1.0 is cut and the catalog is frozen at the `catalog-v1` tag
   (`catalogId`/`$id`, `PS5_CATALOG_ID`, the renderer's `kPs5CatalogId`). Left: submit the renderer
-  and the agent runtime to the A2UI ecosystem list. Steps are in
-  [`docs/going-public.md`](docs/going-public.md).
+  and the agent runtime to the A2UI ecosystem list.
 - **OpenDots on the PS5 (M5).** Plug OpenDots into the channel / AG-UI path on the frozen 1.0 surface
   (text first, voice already landed). The external acceptance test for 1.0.
 - **Local-model track (M8, optional).** Intent-tool eval of a 7–9B model (via ProsperoAI on the PS5)
