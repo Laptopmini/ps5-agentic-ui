@@ -40,9 +40,15 @@ one file: a **Community renderers** table and an **Agent libraries** table.
 
 The page has no legend defining its status labels. Observed usage: **Active** is the norm for
 anything that has shipped a release and is maintained; **Experimental** / **Early stage** are used
-for entries with no tagged release yet or an explicitly exploratory scope. We have a tagged
-`v1.0.0-rc.1` and are maintaining it, so **Active** is defensible; **Experimental** is the more
-conservative choice while it is still a release candidate. Pick one before filing.
+for entries with no tagged release yet or an explicitly exploratory scope. With `v1.0.0` tagged
+and both npm packages published, **Active** is the right label.
+
+### A note on scope
+
+The listing criteria say client renderers should support core layout, text, input and action
+components. This renderer draws a **custom catalog** built for a TV and a controller (the PS5
+catalog), not the A2UI basic catalog. The row and the PR body say so plainly rather than leaving a
+reviewer to find out.
 
 ## Submission steps (public actions — each needs a go-ahead)
 
@@ -59,13 +65,13 @@ conservative choice while it is still a release candidate. Pick one before filin
 ### Renderer row (Community renderers table)
 
 ```
-| **[Laptopmini/ps5-agentic-ui](https://github.com/Laptopmini/ps5-agentic-ui)**<br />(CMake `a2ui`) · [Docs](https://github.com/Laptopmini/ps5-agentic-ui/blob/main/renderer/README.md) | PlayStation 5 (native C++) | `v1.0` | Active | Native, controller-driven renderer for the PlayStation 5; platform-independent C++ core (you supply a `Canvas`), with DualSense, haptics, and system-keyboard input. |
+| **[Laptopmini/ps5-agentic-ui](https://github.com/Laptopmini/ps5-agentic-ui)**<br />(CMake `a2ui::a2ui`) · [Docs](https://github.com/Laptopmini/ps5-agentic-ui/blob/main/renderer/README.md) | PlayStation 5 (native C++; also desktop via SDL2) | `v1.0` | Active | Native, controller-driven renderer for a custom TV-and-controller catalog (menus, shelves, dashboards, system keyboard and dialogs). Platform-independent C++ core: you supply a `Canvas`. |
 ```
 
 ### Agent-runtime row (Agent libraries table)
 
 ```
-| **[Laptopmini/ps5-agentic-ui](https://github.com/Laptopmini/ps5-agentic-ui)** · [Docs](https://github.com/Laptopmini/ps5-agentic-ui/blob/main/server/README.md) | TypeScript | Active | AG-UI agent runtime that emits A2UI v1.0 surfaces from a conversation and validates the model's tool-calls against a JSON-Schema catalog; runs as a Node server or embedded in QuickJS, any OpenAI-compatible model. |
+| **[Laptopmini/ps5-agentic-ui](https://github.com/Laptopmini/ps5-agentic-ui)**<br />(`ps5-a2ui-agent`) · [Docs](https://github.com/Laptopmini/ps5-agentic-ui/blob/main/runtime/README.md) | TypeScript | Active | AG-UI agent runtime that turns flat intent tools into A2UI v1.0 surfaces, validates surfaces against a JSON-Schema catalog, and gates tools behind user approval. Node or QuickJS, any OpenAI-compatible model. |
 ```
 
 ### Pull request
@@ -74,20 +80,23 @@ conservative choice while it is still a release candidate. Pick one before filin
 
 **Body:**
 
-> Adds **ps5-agentic-ui** to the ecosystem list — a renderer and the agent runtime that drives it.
+> Adds **ps5-agentic-ui** to the ecosystem list: a renderer and the agent runtime that drives it.
 >
-> **Renderer (Community renderers).** A native A2UI **v1.0** renderer for the
-> PlayStation 5. The core is platform-independent C++ — you supply a `Canvas` — so it also runs on
-> desktop via SDL2/GL. Input is the DualSense, haptics/adaptive triggers and the system keyboard.
-> Supports core layout/text/input/action components plus shelves, a stats dashboard and voice
-> (on-console STT). Packaged with CMake (`find_package(a2ui 1.0 CONFIG)` → `a2ui::a2ui`). MIT.
-> Runnable example: `scripts/play.sh` builds the renderer and runs it against the agent on a
-> desktop; `renderer/README.md` has build + integration instructions.
+> **Renderer (Community renderers).** A native A2UI **v1.0** renderer for the PlayStation 5. The
+> core is platform-independent C++ (you supply a `Canvas`), so it also runs on desktop via SDL2,
+> which is how to try it without a console. It draws a **custom catalog** designed for a TV and a
+> controller (screens, menus, shelves of tiles, dashboards, text and voice prompts, confirms,
+> notices) rather than the basic catalog; input is the DualSense, with haptics, adaptive triggers
+> and the system keyboard. Packaged as a CMake target (`a2ui::a2ui`, via FetchContent or
+> `find_package`). MIT.
+> Runnable example: `renderer/examples/hello` (no dependencies), or
+> `a2ui-host renderer/fixtures/home-shelves.jsonl` for a window; steps are in the README.
 >
-> **Agent runtime (Agent libraries).** A TypeScript AG-UI runtime that generates A2UI v1.0 surfaces
-> from a conversation and validates the model's tool-calls against the same JSON-Schema catalog the
-> renderer consumes, over AG-UI via CopilotKit. Runs as a Node HTTP server or embedded in QuickJS
-> on the console; works with any OpenAI-compatible model. Docs: `server/README.md`.
+> **Agent runtime (Agent libraries).** `ps5-a2ui-agent` on npm: a TypeScript AG-UI runtime that
+> generates A2UI v1.0 surfaces from flat "intent" tool calls, validates surfaces against the same
+> JSON-Schema catalog the renderer consumes, and adds an approval gate and secret handles. Runs
+> in Node or embedded in QuickJS; works with any OpenAI-compatible model.
+> Docs: `runtime/README.md`.
 >
 > Repo: <https://github.com/Laptopmini/ps5-agentic-ui>
 >
@@ -100,12 +109,12 @@ conservative choice while it is still a release candidate. Pick one before filin
 > Sharing a native A2UI **v1.0** renderer for the PlayStation 5, plus the agent runtime that drives
 > it. Agent-driven surfaces become native, controller-driven PS5 screens, operated entirely from the
 > DualSense (haptics, adaptive triggers, the system keyboard, and on-console voice). The renderer is
-> a platform-independent C++ core (you supply a `Canvas`); the agent runtime is TypeScript (Node or
-> QuickJS-embedded, any OpenAI-compatible model). MIT-licensed. Repo:
+> a platform-independent C++ core (you supply a `Canvas`) and runs on a desktop too; the agent
+> runtime is TypeScript (`ps5-a2ui-agent` on npm; Node or QuickJS, any OpenAI-compatible model).
+> MIT-licensed. Repo:
 > <https://github.com/Laptopmini/ps5-agentic-ui> — happy to answer questions, and I can add a short
 > demo capture.
 
 ## After it lands
 
 - [ ] Confirm the frozen `catalogId` URL resolves anonymously once public.
-- [ ] When 1.0 ships for real (dropping `-rc.1`), revisit the `Status` / `Versions` cells if needed.

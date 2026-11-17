@@ -40,6 +40,11 @@ Mesa fork, no native title (see [rendering](rendering.md) for why the stock `lib
 enough). `scripts/ps5-ggml.sh` cross-compiles whisper.cpp + ggml-vulkan as PS5 static libraries;
 they link into the console app and `dlopen` the RADV `libvulkan.so.1` the app already ships.
 
+The model is not bundled. The app loads `ggml-base.en.bin` from its own folder, so download it
+with whisper.cpp's `models/download-ggml-model.sh base.en` and put it next to the app:
+`curl -T ggml-base.en.bin ftp://<console>:2121/data/homebrew/PS5AgenticUI/ggml-base.en.bin`. Without
+it the app runs as usual and voice input reports that the model couldn't be loaded.
+
 `renderer/src/ps5_whisper.{hpp,cpp}` wraps it: lazy-load the model on the GPU (`use_gpu = true`),
 convert the captured PCM to float, run `whisper_full`, return the transcript. It runs on a worker
 thread so the UI keeps animating; the result is sent as the player's turn on the main thread.

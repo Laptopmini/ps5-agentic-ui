@@ -1,8 +1,8 @@
 # The PS5 as a CopilotKit Channels channel
 
 Instead of (or as well as) running its own agent, the console can be a **surface for an agent
-elsewhere** on the network, through a CopilotKit Channels `PlatformAdapter` — `copilotkit-ps5`
-(`channel/`, published as an npm package). Verified on the console.
+elsewhere** on the network, through a CopilotKit Channels `PlatformAdapter`
+(`channel/`, npm `copilotkit-channels-ps5`). Verified on the console.
 
 ## How it works
 

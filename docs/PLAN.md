@@ -18,12 +18,14 @@ A proof of concept, not a product — but the libraries should be clean enough t
 
 ## The libraries
 
-Four reusable libraries + one example app, sharing the **PS5 catalog** (the A2UI 1.0 contract). The
-[top-level README](../README.md#the-libraries-10) maps
-them; in short: the **a2ui renderer** (C++, a CMake package), the **agent runtime** (TS, Node server
-or QuickJS-embedded; see [agent.md](agent.md)), the **CopilotKit channel adapter** (`copilotkit-ps5`
-npm; see [channel.md](channel.md)), and the **device layer** (haptics/light bar/triggers + console
-bindings). The example app is `payload/console` (see [packaging.md](packaging.md)).
+Three packages and one example app, sharing the **PS5 catalog** (the A2UI 1.0 contract). The
+[top-level README](../README.md#whats-in-here) maps them; in short: the **a2ui renderer** (C++, the
+CMake target `a2ui::a2ui`, which includes the portable haptics model), the **agent runtime** (TS,
+npm `ps5-a2ui-agent`, in Node or embedded in QuickJS; see [agent.md](agent.md)) and the
+**CopilotKit Channels adapter** (npm `copilotkit-channels-ps5`; see [channel.md](channel.md)). The
+example app is `payload/console` (see [packaging.md](packaging.md)); it is also the reference for
+the console bindings (DualSense, system keyboard, dialogs), and its agent (`server/`) is the worked
+example of building on the runtime.
 
 ## Topical research
 
@@ -40,11 +42,11 @@ bindings). The example app is `payload/console` (see [packaging.md](packaging.md
 - **Intelligence is optional.** First and foremost this is open tooling that works on its own runner;
   CopilotKit Intelligence is supported for whoever wants it (and because OpenDots needs it), but the
   channel must not depend on it. (The one internal seam is the start hook — see docs/channel.md.)
-- **Model strategy:** any OpenAI-compatible provider via `LLM_API_KEY` (+ `LLM_MODEL`), reached
-  through **OpenRouter** by default (override the endpoint with `LLM_BASE_URL`). Every milestone was
-  built and verified end to end on **MiniMax-M3** (`minimax/minimax-m3`). On-console models are supported
-  but optional (STT, an offline fallback, routing) — realistic for small jobs, not for driving the
-  agent.
+- **Model strategy:** any OpenAI-compatible endpoint via `LLM_API_KEY` and `LLM_MODEL`, with
+  **OpenRouter** as the default endpoint (override it with `LLM_BASE_URL`). No model is built in;
+  the design target is a small, inexpensive model with tool calling, and every milestone was
+  verified end to end on one. On-console models are supported but optional (STT, an offline
+  fallback, routing): realistic for small jobs, not for driving the agent.
 - **Intent tools, not freeform render calls** — simple schemas that small models get right; the server
   translates them to A2UI (see [agent.md](agent.md)).
 - **Native UI first**, and the model decides *content* while the renderer/runtime own *behaviour*
@@ -59,11 +61,10 @@ bindings). The example app is `payload/console` (see [packaging.md](packaging.md
 Done: the libraries on the Mac and on the console; the app with its own on-console agent (native
 screens, DualSense, system keyboard, dialogs, notifications, HTTPS to the model, a home-screen tile);
 the PS5 as a CopilotKit channel; background presence; on-console voice (whisper STT on the GPU). The
-**1.0 library cut (M7)** is done — stable catalog, CMake + npm packaging, docs, license,
-and the `v1.0.0-rc.1` tag and `catalog-v1` freeze. The one remaining M7 step is
-submitting the renderer and agent runtime to the A2UI ecosystem list, which waits on making the
-repo public (see [`going-public.md`](going-public.md)). Next after that is **OpenDots on the PS5 (M5)** as the
-external acceptance test. See [`../BACKLOG.md`](../BACKLOG.md) for everything open.
+**1.0** is cut: a stable catalog (frozen at the `catalog-v1` tag), the CMake target and the two
+npm packages, docs and license. What remains of the release is listing the renderer and the agent
+runtime on the A2UI ecosystem page (see [`going-public.md`](going-public.md)). Next is **OpenDots
+on the PS5** as the external acceptance test. See [`../BACKLOG.md`](../BACKLOG.md) for everything open.
 
 ## Platform constraints (worth knowing)
 

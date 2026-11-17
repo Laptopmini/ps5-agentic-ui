@@ -1,19 +1,22 @@
 # Backlog
 
-Tracked but not yet done. Status as of the 1.0-rc work. See [`docs/PLAN.md`](docs/PLAN.md) for the
+Tracked but not yet done. Status as of 1.0. See [`docs/PLAN.md`](docs/PLAN.md) for the
 goal and architecture, and the topical docs under [`docs/`](docs/) for the research.
 
 ## Milestones remaining
 
-- **1.0 cut (M7) — rc tagged, catalog frozen.** `v1.0.0-rc.1` is cut and the catalog is frozen at
-  the `catalog-v1` tag (`catalogId`/`$id`, `PS5_CATALOG_ID`, the renderer's `kPs5CatalogId`). Left:
-  submit the C/C++ renderer and the TS agent runtime to the A2UI ecosystem list — a public action
-  that also needs the repo to be public (the same step that makes the frozen `catalogId` URL
-  externally resolvable). Gates and steps are in [`docs/going-public.md`](docs/going-public.md).
+- **A2UI ecosystem listing.** 1.0 is cut and the catalog is frozen at the `catalog-v1` tag
+  (`catalogId`/`$id`, `PS5_CATALOG_ID`, the renderer's `kPs5CatalogId`). Left: submit the renderer
+  and the agent runtime to the A2UI ecosystem list. Steps are in
+  [`docs/going-public.md`](docs/going-public.md).
 - **OpenDots on the PS5 (M5).** Plug OpenDots into the channel / AG-UI path on the frozen 1.0 surface
-  (its model on MiniMax, text first, voice already landed). The external acceptance test for 1.0.
+  (text first, voice already landed). The external acceptance test for 1.0.
 - **Local-model track (M8, optional).** Intent-tool eval of a 7–9B model (via ProsperoAI on the PS5)
-  vs MiniMax on the same eval; OpenDots with ProsperoAI as its model. Findings, not a dependency.
+  against a hosted model on the same eval; OpenDots with ProsperoAI as its model. Findings, not a
+  dependency.
+- **A no-key demo on the desktop.** A scripted agent for `scripts/play.sh` that replays a
+  conversation, so the agent path can be tried without a model key (the console app has one).
+- **Committed eval results.** A results table per harness (model, date, command) in `eval/`.
 
 ## Native title & publishing (a bounded sub-project)
 

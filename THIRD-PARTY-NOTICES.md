@@ -6,6 +6,9 @@ home-screen tile (`payload/tile/`) is **GPL-3.0-or-later** because it links drak
 boilerplate — it is a separate program that only asks websrv to start the app, and does not affect
 the license of the rest of this project.
 
+The app icon (`payload/*/sce_sys/icon0.png`), the backdrop (`renderer/assets/background.png`) and
+the screenshots in `docs/images/` are original to this project and under the same MIT license.
+
 Exact versions and checksums for the vendored code are pinned in
 [`renderer/vendor/VERSIONS`](renderer/vendor/VERSIONS); the A2UI schemas in
 [`vendor/a2ui-v1_0/`](vendor/a2ui-v1_0/).
@@ -52,7 +55,7 @@ run time; they are neither bundled nor redistributed here.
 
 The agent runtime and the channel adapter depend on npm packages (`@copilotkit/*`, `@ag-ui/client`,
 `ajv`, and build-time `esbuild`, `typescript`) resolved by the package manager; each keeps its own
-license as published. `@copilotkit/channels-core` is a **peer** dependency of `copilotkit-ps5`.
+license as published. `@copilotkit/channels-core` is a **peer** dependency of `copilotkit-channels-ps5`; `ajv` is a dependency of `ps5-a2ui-agent`.
 
 ## Build / reference only — not distributed
 

@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  typescript:
+    name: TypeScript (agent runtime, channel adapter)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+      - name: Build the npm packages
+        run: pnpm build
+      - name: Check what each package would publish
+        run: |
+          (cd runtime && npm pack --dry-run)
+          (cd channel && npm pack --dry-run)
+      - name: Bundle the agent for the console (QuickJS)
+        run: pnpm build:agent-js
+
+  renderer:
+    name: Renderer (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    env:
+      SDL_VIDEODRIVER: dummy   # the fixture tests render headless
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: brew install sdl2
+      - name: Dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libsdl2-dev libcurl4-openssl-dev libsqlite3-dev
+      - name: Build
+        run: cmake -S renderer -B build && cmake --build build -j 4
+      - name: Test (unit tests, and every fixture rendered headless)
+        run: ctest --test-dir build --output-on-failure
+      - name: Example, with a2ui built from source
+        run: cmake -S renderer/examples/hello -B build-hello && cmake --build build-hello && build-hello/hello
+      - name: Example, against the installed CMake package
+        run: |
+          cmake --install build --prefix "$PWD/prefix"
+          cmake -S renderer/examples/hello -B build-hello-installed -DHELLO_USE_INSTALLED=ON -DCMAKE_PREFIX_PATH="$PWD/prefix"
+          cmake --build build-hello-installed && build-hello-installed/hello
