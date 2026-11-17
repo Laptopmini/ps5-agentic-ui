@@ -57,6 +57,8 @@ Needs a console that runs homebrew (tested on firmware 12.70) with `ftpsrv` and 
 PS5_HOST=<console ip> scripts/ps5-install.sh console      # build and install; start it from the Homebrew Launcher
 ```
 
+To install without building, download `PS5AgenticUI-1.0.0.zip` from the [1.0.0 release](https://github.com/Laptopmini/ps5-agentic-ui/releases/tag/v1.0.0), copy the `PS5AgenticUI` folder inside it to `/data/homebrew/PS5AgenticUI` over FTP, and start "PS5 A2UI" from the Homebrew Launcher.
+
 The app opens on a setup screen. From there:
 
 - **Square** starts the offline demo: sample screens and a canned conversation, no key needed.
