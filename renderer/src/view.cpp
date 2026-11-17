@@ -882,8 +882,11 @@ float View::drawComponent(Ctx& ctx, const std::string& id, float x, float y, flo
     float rowH = tileHeight(c);
     // Clip the row to the shelf's own width (intersected with the card's band) so a tile scrolled
     // past either edge — or a last tile wider than the shelf — is cut at the edge instead of
-    // bleeding over the card. Restore the card's clip afterwards.
-    Rect rowClip{x, cy - 10, w, rowH + 20};
+    // bleeding over the card. The clip is a little larger than the row: the focused tile grows by
+    // 8 and its ring is 4 wide, and at either end of the row that must not be cut. Restore the
+    // card's clip afterwards.
+    const float ring = 14;
+    Rect rowClip{x - ring, cy - ring, w + 2 * ring, rowH + 2 * ring};
     if (ctx.clip) {
       const float l = std::max(rowClip.x, ctx.clip->x), r = std::min(rowClip.x + rowClip.w, ctx.clip->x + ctx.clip->w);
       const float t = std::max(rowClip.y, ctx.clip->y), b = std::min(rowClip.y + rowClip.h, ctx.clip->y + ctx.clip->h);
