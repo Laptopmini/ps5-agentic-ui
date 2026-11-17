@@ -41,6 +41,9 @@ Voice input (hold R2) needs the speech model: put ggml-base.en.bin (from whisper
 models/download-ggml-model.sh base.en) in the same folder.
 
 Licenses: this app is MIT. What it links and ships keeps its own license; see licenses/.
+GNU libiconv (LGPL-2.1-or-later) is linked statically. The complete source of this app and its
+build (scripts/ps5-build.sh) are at the address above, so you can rebuild it against a modified
+libiconv; libiconv's source is at https://www.gnu.org/software/libiconv/.
 TXT
 
 ZIP="$OUT/PS5AgenticUI-$VERSION.zip"

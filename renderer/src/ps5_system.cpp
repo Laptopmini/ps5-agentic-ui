@@ -4,7 +4,9 @@
 #include <sqlite3.h>
 #include <sys/stat.h>
 #include <sys/statvfs.h>
-#include <sys/sysctl.h>
+#ifndef __linux__
+#include <sys/sysctl.h>  // kern.boottime: the console (FreeBSD) and macOS; Linux has no such header
+#endif
 #include <sys/time.h>
 #include <unistd.h>
 
@@ -350,6 +352,7 @@ nlohmann::json systemInfo(const std::string& storagePath) {
     }
   }
 #endif
+#ifndef __linux__
   struct timeval boot {};
   size_t len = sizeof boot;
   if (sysctlbyname("kern.boottime", &boot, &len, nullptr, 0) == 0 && boot.tv_sec > 0) {
@@ -357,6 +360,10 @@ nlohmann::json systemInfo(const std::string& storagePath) {
     gettimeofday(&now, nullptr);
     if (now.tv_sec >= boot.tv_sec) out["uptimeMinutes"] = (now.tv_sec - boot.tv_sec) / 60;
   }
+#else
+  struct timespec up {};  // a Linux host (development and CI only)
+  if (clock_gettime(CLOCK_BOOTTIME, &up) == 0) out["uptimeMinutes"] = up.tv_sec / 60;
+#endif
   struct statvfs fs {};
   if (statvfs(storagePath.c_str(), &fs) == 0 && fs.f_blocks > 0) {
     const unsigned long long unit = fs.f_frsize ? fs.f_frsize : fs.f_bsize;

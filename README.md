@@ -132,7 +132,7 @@ The model never writes UI trees. It calls small, flat **intent tools**, and the 
 
 ## Status
 
-1.0. The catalog is frozen at the [`catalog-v1`](https://github.com/Laptopmini/ps5-agentic-ui/tree/catalog-v1) tag; the libraries follow semantic versioning from here. Verified on a PS5 on firmware 12.70 and on macOS.
+1.0. The catalog is frozen at the [`catalog-v1`](https://github.com/Laptopmini/ps5-agentic-ui/tree/catalog-v1) tag; the libraries follow semantic versioning from here. Verified on a PS5 on firmware 12.70, on macOS and on Linux.
 
 This is an independent project. It is not affiliated with or endorsed by Sony Interactive Entertainment, CopilotKit or Google. "PlayStation", "PS5" and "DualSense" are trademarks of Sony Interactive Entertainment Inc.
 

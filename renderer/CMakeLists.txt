@@ -36,7 +36,12 @@ if(A2UI_BUILD_DEV)
   find_package(SQLite3 REQUIRED)
   add_library(ps5system STATIC src/ps5_system.cpp src/ps5_voice.cpp src/ps5_whisper.cpp)
   target_include_directories(ps5system PUBLIC src vendor)
-  target_link_libraries(ps5system PUBLIC SQLite3::SQLite3)
+  # FindSQLite3 names its target SQLite::SQLite3; CMake 4.3 added SQLite3::SQLite3 and deprecates the old one.
+  if(TARGET SQLite3::SQLite3)
+    target_link_libraries(ps5system PUBLIC SQLite3::SQLite3)
+  else()
+    target_link_libraries(ps5system PUBLIC SQLite::SQLite3)
+  endif()
   target_compile_options(ps5system PRIVATE -Wall -Wextra)
 
   enable_testing()
