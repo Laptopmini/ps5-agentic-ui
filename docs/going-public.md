@@ -118,3 +118,34 @@ reviewer to find out.
 ## After it lands
 
 - [ ] Confirm the frozen `catalogId` URL resolves anonymously once public.
+
+## Launch post (CopilotKit Discord)
+
+Draft. Attach `docs/images/conversation.png`, or a short capture from the console once there is one.
+
+> **ps5-agentic-ui 1.0: agentic UI on a PlayStation 5, with AG-UI, A2UI 1.0 and CopilotKit Channels**
+>
+> I've been building open-source tooling to put agents on a PS5, and it's public now:
+> <https://github.com/Laptopmini/ps5-agentic-ui>
+>
+> The agent doesn't answer with text. It answers with native, controller-driven screens (menus,
+> shelves of tiles, dashboards, the system keyboard, system dialogs, haptics), described in
+> A2UI 1.0 and carried over AG-UI the way CopilotKit does it.
+>
+> What's in it:
+> - **`copilotkit-channels-ps5`**: a Channels `PlatformAdapter`, so the PS5 is a channel like Slack
+>   or Discord. Channels UI you post is drawn as PS5 screens; while the app is closed, messages
+>   arrive as system notifications over whatever game is running.
+> - **`ps5-a2ui-agent`**: an AG-UI agent runtime in TypeScript. The same code runs in Node and
+>   embedded in QuickJS on the console, with any OpenAI-compatible model.
+> - **A C++ A2UI 1.0 renderer** with no platform dependency. It runs on a Mac or Linux desktop
+>   too, so you can try all of this without a console.
+> - **A demo app** for the PS5 with its own on-console agent and voice input (speech-to-text on
+>   the console's GPU).
+>
+> One finding that may be useful beyond the PS5: small models are bad at writing A2UI trees and
+> good at calling flat "intent" tools that a runtime translates into A2UI. Same model, same 16
+> scenarios: 15 correct screens with intent tools, 1 when writing the components itself.
+>
+> No PS5 needed to try it: clone, build the renderer, and open a recorded screen in about two
+> minutes. Feedback very welcome, especially on the Channels adapter.

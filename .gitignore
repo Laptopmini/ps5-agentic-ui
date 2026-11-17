@@ -13,3 +13,4 @@ payload/vulkan-smoke/vulkan-smoke.elf
 
 # channel adapter build output (pnpm -C channel build)
 channel/dist/
+dist/
