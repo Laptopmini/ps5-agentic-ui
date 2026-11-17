@@ -6,8 +6,10 @@ goal and architecture, and the topical docs under [`docs/`](docs/) for the resea
 ## Milestones remaining
 
 - **A2UI ecosystem listing.** 1.0 is cut and the catalog is frozen at the `catalog-v1` tag
-  (`catalogId`/`$id`, `PS5_CATALOG_ID`, the renderer's `kPs5CatalogId`). Left: submit the renderer
-  and the agent runtime to the A2UI ecosystem list.
+  (`catalogId`/`$id`, `PS5_CATALOG_ID`, the renderer's `kPs5CatalogId`). Submitted to the A2UI
+  ecosystem page's catalogs table in
+  [a2ui-project/a2ui#4269](https://github.com/a2ui-project/a2ui/pull/4269); left: respond to review
+  until it merges.
 - **OpenDots on the PS5 (M5).** Plug OpenDots into the channel / AG-UI path on the frozen 1.0 surface
   (text first, voice already landed). The external acceptance test for 1.0.
 - **Local-model track (M8, optional).** Intent-tool eval of a 7–9B model (via ProsperoAI on the PS5)

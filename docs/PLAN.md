@@ -62,8 +62,8 @@ Done: the libraries on the Mac and on the console; the app with its own on-conso
 screens, DualSense, system keyboard, dialogs, notifications, HTTPS to the model, a home-screen tile);
 the PS5 as a CopilotKit channel; background presence; on-console voice (whisper STT on the GPU). The
 **1.0** is cut: a stable catalog (frozen at the `catalog-v1` tag), the CMake target and the two
-npm packages, docs and license. What remains of the release is listing the renderer and the agent
-runtime on the A2UI ecosystem page. Next is **OpenDots
+npm packages, docs and license. The listing on the A2UI ecosystem page is in review
+([a2ui-project/a2ui#4269](https://github.com/a2ui-project/a2ui/pull/4269)). Next is **OpenDots
 on the PS5** as the external acceptance test. See [`../BACKLOG.md`](../BACKLOG.md) for everything open.
 
 ## Platform constraints (worth knowing)
