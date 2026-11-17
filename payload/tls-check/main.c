@@ -1,6 +1,6 @@
-// M2 spike 1: can a payload reach the cloud model over HTTPS?
+// Can a payload reach the cloud model over HTTPS?
 //
-// Two TLS paths, each against https://api.minimax.io/v1/models with no API key (a 401 proves
+// Two TLS paths, each against https://openrouter.ai/api/v1/key with no API key (a 401 proves
 // the handshake and certificate check worked; nothing secret is sent):
 //   A. the ported libcurl + OpenSSL, with the CA bundle linked into the payload. This is the
 //      path the host's AgentClient uses, so a pass means it can be reused on the console as-is.
@@ -29,7 +29,7 @@ int sceHttp2CreateRequestWithURL(int, const char*, const char*, uint64_t);
 int sceHttp2SendRequest(int, const void*, size_t);
 int sceHttp2GetStatusCode(int, int*);
 
-static const char* kUrl = "https://api.minimax.io/v1/models";
+static const char* kUrl = "https://openrouter.ai/api/v1/key";
 static const char* kAgent = "ps5-agentic-ui/tls-check";
 
 static void notify(const char* fmt, ...) {
@@ -131,9 +131,9 @@ int main(void) {
 #endif
   curl_global_cleanup();
 
-  // 401 (no key sent) means the request reached MiniMax over verified TLS.
+  // 401 (no key sent) means the request reached the provider over verified TLS.
   bool okA = sa == 401 || sa == 200, okB = sb == 401 || sb == 200;
-  notify("TLS to MiniMax: curl %s, sceHttp2 %s", okA ? "OK" : "FAILED", okB ? "OK" : b);
+  notify("TLS to the model provider: curl %s, sceHttp2 %s", okA ? "OK" : "FAILED", okB ? "OK" : b);
   printf("[tls-check] result: curl %s, sceHttp2 %s\n", okA ? "OK" : "FAILED", okB ? "OK" : b);
   // Runs 1 and 2 aborted after main returned ("resource deadlock would occur" from the exit
   // path). End the process without running exit handlers; see docs/findings/07-m2-tls.md.

@@ -142,7 +142,7 @@ class View {
   }
   void setStatus(const std::string& text) { status_ = text; }
   /**
-   * Voice capture/transcription state, for the composer's live feedback (M6). Listening animates the
+   * Voice capture/transcription state, for the composer's live feedback. Listening animates the
    * mic (R2 held); Transcribing shows a "…" in the message field until the transcript is sent. Kept
    * separate from status_, which a connected client overwrites with the agent's run status each frame.
    */

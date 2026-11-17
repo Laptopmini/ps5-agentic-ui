@@ -86,14 +86,15 @@ struct App {
       jo.bundle.assign(std::istreambuf_iterator<char>(in), {});
       if (!o.credentials.empty()) {
         auto creds = Credentials::load(o.credentials);
-        if (!creds || creds->provider == "server") throw std::runtime_error(o.credentials + ": no MiniMax or OpenRouter key");
+        if (!creds || creds->env().empty()) throw std::runtime_error(o.credentials + ": no model key (provider openrouter or custom)");
         jo.env = creds->env();
-        jo.model = creds->modelOrDefault();
+        jo.model = creds->model;
         std::cerr << "credentials: " << creds->label() << ", model " << jo.model << "\n";
       } else {
         for (const char* k : {"LLM_BASE_URL", "LLM_API_KEY"})
           if (const char* v = std::getenv(k)) jo.env[k] = v;
-        if (const char* m = std::getenv("LLM_MODEL")) jo.model = m;  // e.g. minimax/minimax-m3 on OpenRouter
+        if (const char* m = std::getenv("LLM_MODEL")) jo.model = m;
+        if (jo.model.empty()) throw std::runtime_error("set LLM_MODEL to the model id to use");
       }
       jo.log = [](const std::string& line) { std::cerr << "[js] " << line << "\n"; };
       // --system FILE: stand-in answers for the agent's console reads ({"installed_titles": {...}}),

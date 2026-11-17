@@ -9,7 +9,7 @@ RUN apt-get update \
     git glslc glslang-tools spirv-tools spirv-headers \
  && rm -rf /var/lib/apt/lists/*
 # glslc/glslang/spirv-tools: ggml-vulkan compiles its compute shaders to SPIR-V at build time
-# (finding 25, Track B — on-console whisper). git: fetch the pinned ggml/whisper.cpp source.
+# (on-console whisper, docs/voice.md). git: fetch the pinned ggml/whisper.cpp source.
 # ps5-payload-dev/pacbrew-repo v0.41.1 (2026-10-10). Bump the URL and checksum together.
 ADD --checksum=sha256:e811bc2e4676c5bb7f80a8fe928d2985dce599996a5ca6b54da3e72699287887 \
     https://github.com/ps5-payload-dev/pacbrew-repo/releases/download/v0.41.1/ps5-payload-dev.tar.gz /tmp/ps5-payload-dev.tar.gz

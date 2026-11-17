@@ -21,7 +21,7 @@ class JsAgent : public AgentConnection {
   struct Options {
     std::string bundle;                     // the agent.js source
     std::map<std::string, std::string> env;  // process.env (e.g. LLM_API_KEY, LLM_BASE_URL)
-    std::string model = "MiniMax-M3";
+    std::string model;                      // the model id the runtime asks for
     std::string caBundle;                   // PEM certificates for HTTPS ("" = system default)
     std::function<void(const std::string&)> log;  // console.log / errors
     /**

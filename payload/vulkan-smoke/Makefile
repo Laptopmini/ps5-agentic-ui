@@ -1,4 +1,4 @@
-# Vulkan compute smoke (finding 25, Track B). Brings up a Vulkan compute device from a payload via
+# Vulkan compute smoke (docs/rendering.md). Brings up a Vulkan compute device from a payload via
 # the RADV libvulkan.so.1 the app already ships, to see if on-console whisper can be ggml-vulkan in
 # a payload (no static RADV, no native title). dlopens the driver, so it links no vulkan lib.
 # Sent to the ELF loader so it runs without the app; see main.cpp.

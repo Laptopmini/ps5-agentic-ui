@@ -1,4 +1,4 @@
-# M4 spike: the background payload (no window). Sent to the ELF loader so it stays resident;
+# The background payload (no window). Sent to the ELF loader so it stays resident;
 # see main.cpp.
 PS5_HOST ?= ps5
 PS5_PORT ?= 9021

@@ -1,4 +1,4 @@
-// Vulkan compute smoke (M6 / finding 25, Track B — as a PAYLOAD, not a native title).
+// Vulkan compute smoke (docs/rendering.md), as a payload, not a native title.
 //
 // The question this answers: our console app already runs Mesa/zink on "RADV NAVI21" (see the
 // console log), which means a RADV Vulkan driver (libvulkan.so.1) is already present next to the

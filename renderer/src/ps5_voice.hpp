@@ -1,4 +1,4 @@
-// Mic capture on the console (M6, docs/voice.md): records the DualSense microphone as 16 kHz
+// Mic capture on the console (docs/voice.md): records the DualSense microphone as 16 kHz
 // mono 16-bit PCM, the form speech-to-text wants. The audio-in calls aren't in the payload SDK, so
 // the resident libSceAudioIn.sprx is loaded at run time (sceKernelLoadStartModule) and its exports
 // resolved by handle (sceKernelDlsym) — how a ps5-payload-dev payload reaches a system module that

@@ -92,24 +92,21 @@ const char* reason(int code) {
 
 std::string Credentials::problem() const {
   const bool remote = provider == "server" || provider == "channel";
-  if (provider != "minimax" && provider != "openrouter" && !remote) return "Choose MiniMax, OpenRouter, your own server or a channel.";
+  const bool custom = provider == "custom";
+  if (provider != "openrouter" && !custom && !remote) return "Choose OpenRouter, another OpenAI-compatible endpoint, your own server or a channel.";
   if (key.empty()) return remote ? "Enter the access code." : "Enter the API key.";
   if (key.size() > 512 || !printable(key, false)) return "That key has spaces or characters keys don't have. Paste it again.";
   if (model.size() > 128 || !printable(model, false)) return "That model id doesn't look right.";
-  if (remote) {
-    if (url.rfind("http://", 0) != 0 && url.rfind("https://", 0) != 0) return "The server address should start with http:// or https://.";
-    if (url.size() > 256 || !printable(url, false)) return "That server address doesn't look right.";
+  if (!remote && model.empty()) return "Enter the model id.";
+  if (remote || custom) {
+    const char* what = custom ? "endpoint" : "server";
+    if (url.rfind("http://", 0) != 0 && url.rfind("https://", 0) != 0) return std::string("The ") + what + " address should start with http:// or https://.";
+    if (url.size() > 256 || !printable(url, false)) return std::string("That ") + what + " address doesn't look right.";
   }
   return "";
 }
 
-std::string Credentials::modelOrDefault() const {
-  if (!model.empty()) return model;
-  return provider == "openrouter" ? "minimax/minimax-m3" : "MiniMax-M3";
-}
-
 std::string Credentials::label() const {
-  if (provider == "minimax") return "MiniMax";
   if (provider == "openrouter") return "OpenRouter";
   size_t start = url.find("://");
   start = start == std::string::npos ? 0 : start + 3;
@@ -117,9 +114,9 @@ std::string Credentials::label() const {
 }
 
 std::map<std::string, std::string> Credentials::env() const {
-  // Both convenience providers use the same LLM_API_KEY; only the endpoint differs.
+  // Any OpenAI-compatible endpoint: the same LLM_API_KEY, only the base URL differs.
   if (provider == "openrouter") return {{"LLM_BASE_URL", "https://openrouter.ai/api/v1"}, {"LLM_API_KEY", key}};
-  if (provider == "minimax") return {{"LLM_BASE_URL", "https://api.minimax.io/v1"}, {"LLM_API_KEY", key}};
+  if (provider == "custom") return {{"LLM_BASE_URL", url}, {"LLM_API_KEY", key}};
   return {};
 }
 

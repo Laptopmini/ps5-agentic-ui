@@ -29,17 +29,17 @@ namespace a2ui {
 
 /** Which model to use and how to reach it. Stored as JSON (credentials.json on the console). */
 struct Credentials {
-  std::string provider;  // "minimax", "openrouter", "server" (an AG-UI server, e.g. on a Mac) or
-                         // "channel" (a CopilotKit channel: channel/adapter.ts)
+  std::string provider;  // "openrouter", "custom" (any other OpenAI-compatible endpoint), "server"
+                         // (an AG-UI server, e.g. on a Mac) or "channel" (a CopilotKit channel:
+                         // channel/adapter.ts)
   std::string key;       // the provider key, or the server's or channel's access code
-  std::string model;     // "" = the provider's default
-  std::string url;       // "server": http://<host>:8790/agent; "channel": http://<host>:8792
+  std::string model;     // the model id; required for "openrouter" and "custom"
+  std::string url;       // "custom": the endpoint's base URL (https://…/v1); "server":
+                         // http://<host>:8790/agent; "channel": http://<host>:8792
 
   /** Checks the fields; returns "" if usable, otherwise what's wrong (shown to the sender). */
   std::string problem() const;
-  /** The model id to use ("MiniMax-M3", or "minimax/minimax-m3" on OpenRouter, when unset). */
-  std::string modelOrDefault() const;
-  /** "MiniMax", "OpenRouter" or the server's host, for the screen. */
+  /** "OpenRouter", or the host of the endpoint, server or channel, for the screen. */
   std::string label() const;
   /** process.env for the agent runtime (JsAgent). */
   std::map<std::string, std::string> env() const;

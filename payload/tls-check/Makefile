@@ -1,4 +1,4 @@
-# M2 spike 1: can a payload reach the cloud model over HTTPS?
+# Can a payload reach the cloud model over HTTPS?
 PS5_HOST ?= ps5
 PS5_PORT ?= 9021
 

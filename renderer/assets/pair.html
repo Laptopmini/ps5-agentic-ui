@@ -45,8 +45,8 @@
       <div class="choices">
         <label class="choice"><input type="radio" name="provider" value="openrouter" checked>
           <span><strong>OpenRouter</strong><span class="muted">A key you can cap and limit to one model. Recommended.</span></span></label>
-        <label class="choice"><input type="radio" name="provider" value="minimax">
-          <span><strong>MiniMax</strong><span class="muted">A key from platform.minimax.io.</span></span></label>
+        <label class="choice"><input type="radio" name="provider" value="custom">
+          <span><strong>Another OpenAI-compatible endpoint</strong><span class="muted">A hosted provider, or a model on your network.</span></span></label>
         <label class="choice"><input type="radio" name="provider" value="server">
           <span><strong>My own server</strong><span class="muted">The key stays on your computer.</span></span></label>
         <label class="choice"><input type="radio" name="provider" value="channel">
@@ -59,10 +59,10 @@
       openrouter.ai give it a <strong>credit limit</strong> and a <strong>guardrail</strong> that allows only the
       model below. If it ever leaks, it can't spend more than that limit or call anything else, and you can delete it there.
     </div>
-    <div class="note" data-for="minimax" hidden>
-      Make a key just for this console. It's stored on the PS5, where other homebrew can read it, and MiniMax doesn't
-      offer spending caps per key, so keep your balance low. If the key ever leaks, delete it on platform.minimax.io;
-      nothing else uses it.
+    <div class="note" data-for="custom" hidden>
+      Enter the endpoint's base URL (the part before <code>/chat/completions</code>). Make a key just for this
+      console: it's stored on the PS5, where other homebrew can read it. If the provider offers spending limits
+      per key, set one, and delete the key there if it ever leaks.
     </div>
     <div class="note" data-for="server" hidden>
       Run the agent server on your computer (it holds the model key) and enter its address and access code. The
@@ -73,7 +73,7 @@
       PS5 adapter) and enter its address and access code. The console only stores those.
     </div>
 
-    <div class="field" data-for="server channel" hidden>
+    <div class="field" data-for="custom server channel" hidden>
       <label for="url" id="url-label">Server address</label>
       <input id="url" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="http://192.168.0.10:8790/agent">
     </div>
@@ -81,9 +81,9 @@
       <label for="key" id="key-label">API key</label>
       <input id="key" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" required>
     </div>
-    <div class="field" data-for="openrouter minimax">
-      <label for="model">Model <span class="muted">(optional)</span></label>
-      <input id="model" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="minimax/minimax-m3">
+    <div class="field" data-for="openrouter custom">
+      <label for="model">Model</label>
+      <input id="model" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="provider/model-id">
     </div>
     <div class="field">
       <label for="code">Code on the TV</label>
@@ -99,7 +99,8 @@
   const CONSOLE_PK = "{{PK}}";
   const form = document.getElementById("form"), result = document.getElementById("result"), send = document.getElementById("send");
   const $ = (id) => document.getElementById(id);
-  const placeholders = { openrouter: "minimax/minimax-m3", minimax: "MiniMax-M3" };
+  const placeholders = { openrouter: "provider/model-id", custom: "model-id" };
+  const urls = { custom: ["Endpoint address", "https://api.example.com/v1"], server: ["Server address", "http://192.168.0.10:8790/agent"], channel: ["Channel address", "http://192.168.0.10:8792"] };
 
   // The QR code on the TV carries the code in the fragment, which never leaves this device.
   const fromHash = new URLSearchParams(location.hash.slice(1)).get("code");
@@ -112,8 +113,7 @@
     for (const el of document.querySelectorAll("[data-for]")) el.hidden = !el.dataset.for.split(" ").includes(p);
     const remote = p === "server" || p === "channel";
     $("key-label").textContent = remote ? "Access code" : "API key";
-    $("url-label").textContent = p === "channel" ? "Channel address" : "Server address";
-    $("url").placeholder = p === "channel" ? "http://192.168.0.10:8792" : "http://192.168.0.10:8790/agent";
+    if (urls[p]) [$("url-label").textContent, $("url").placeholder] = urls[p];
     if (placeholders[p]) $("model").placeholder = placeholders[p];
   }
   form.addEventListener("change", update);
@@ -125,9 +125,10 @@
     event.preventDefault();
     const p = provider();
     const remote = p === "server" || p === "channel";
-    const message = { code: $("code").value.trim(), provider: p, key: $("key").value.trim(), model: remote ? "" : $("model").value.trim(), url: remote ? $("url").value.trim() : "" };
+    const message = { code: $("code").value.trim(), provider: p, key: $("key").value.trim(), model: remote ? "" : $("model").value.trim(), url: remote || p === "custom" ? $("url").value.trim() : "" };
     if (!/^[0-9]{6}$/.test(message.code)) return say("Enter the six digits shown on the TV.", true);
     if (!message.key) return say(remote ? "Enter the access code." : "Paste the API key.", true);
+    if (!remote && !message.model) return say("Enter the model id to use.", true);
     send.disabled = true;
     say("Sending…");
     try {

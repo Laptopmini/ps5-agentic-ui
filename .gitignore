@@ -6,7 +6,7 @@ server/logs/
 server/qjs/agent.js
 renderer/.cache/
 
-# ggml/whisper cross-build (finding 25, Track B) — regenerate with scripts/ps5-ggml.sh
+# ggml/whisper cross-build — regenerate with scripts/ps5-ggml.sh
 payload/.ggml-src/
 payload/console/ggml/
 payload/vulkan-smoke/vulkan-smoke.elf

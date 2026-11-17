@@ -7,7 +7,7 @@
 //   {"channel": "http://<mac>:8792", "token": "…"} (scripts/ps5-channel.sh): a CopilotKit channel.
 //   For one launch only: the app deletes it once read.
 // - credentials.json, from the setup screen (Pairing: the key is sent from a phone or computer):
-//   a MiniMax or OpenRouter key runs the agent here (JsAgent, QuickJS); "server" talks to a server.
+//   an OpenRouter key, or one for any other OpenAI-compatible endpoint, runs the agent here (JsAgent, QuickJS); "server" talks to a server.
 // - Neither: the setup screen. Square there starts the offline demo (sample screens and a canned
 //   conversation).
 //
@@ -123,7 +123,7 @@ void say(const char* fmt, ...) {
 constexpr const char* kCredentials = "credentials.json";  // in the app's folder (the loader's cwd)
 constexpr const char* kAppDir = "/data/homebrew/PS5AgenticUI";
 
-/** The agent for a stored key: in-process for MiniMax/OpenRouter, the AG-UI client for a server,
+/** The agent for a stored key: in-process for a model key, the AG-UI client for a server,
  * the channel client for a CopilotKit channel. */
 bool padConnected = false;
 ChannelClient* channelClient = nullptr;  // set while the agent is a channel
@@ -221,14 +221,14 @@ std::unique_ptr<AgentConnection> connect(const Credentials& creds) {
   JsAgent::Options jo;
   jo.bundle.assign(agent_js, agent_js_end);
   jo.env = creds.env();
-  jo.model = creds.modelOrDefault();
+  jo.model = creds.model;
   jo.caBundle.assign(ca_bundle, ca_bundle_end);
   jo.log = [](const std::string& line) { say("js: %s", line.substr(0, 400).c_str()); };
   // The agent's console tools read this console (installed games so far; the rest is simulated).
   jo.system = readConsole;
   try {
     auto js = std::make_unique<JsAgent>(std::move(jo));
-    say("direct: agent runtime in QuickJS, loaded in %.0f ms, %s model %s", js->loadMs(), creds.label().c_str(), creds.modelOrDefault().c_str());
+    say("direct: agent runtime in QuickJS, loaded in %.0f ms, %s model %s", js->loadMs(), creds.label().c_str(), creds.model.c_str());
     return js;
   } catch (const std::exception& e) {
     say("direct: %s", e.what());
@@ -458,10 +458,10 @@ int main() {
 
   bool held[17] = {};
   ps5voice::setLog([](const char* line) { say("%s", line); });  // mic steps → console-log.txt
-  ps5voice::Recorder recorder;  // hold R2 to record the mic (voice capture, M6)
+  ps5voice::Recorder recorder;  // hold R2 to record the mic (voice capture)
   say("microphone: %s", recorder.available() ? "ready (hold R2 to speak)" : recorder.error().c_str());
   ps5whisper::setLog([](const char* line) { say("%s", line); });  // whisper/ggml steps → console-log.txt
-  ps5whisper::Transcriber transcriber("ggml-base.en.bin");  // on-console STT on the GPU (M6, finding 25)
+  ps5whisper::Transcriber transcriber("ggml-base.en.bin");  // on-console STT on the GPU (docs/voice.md)
   view.setVoiceAvailable(recorder.available());  // gates the "R2 Speak" hint and the mic feedback
   // STT runs on a worker thread so the UI keeps animating (mic pulse, the "…" loader) while whisper
   // works; the result is collected and sent on the main thread (client/session aren't thread-safe).

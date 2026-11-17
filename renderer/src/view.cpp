@@ -60,7 +60,7 @@ const std::vector<std::pair<std::string, std::string>> kSuggestions = {
     {"How full is my console?", "How much storage is left, and what's taking up the most space?"},
     {"Read my temperatures", "What are my console's temperatures right now?"},                // live sensors
     {"What's my most-played game?", "Which of my games have I played the most, and for how long?"},
-    {"Remind me to take a break", "Remind me to take a break in 30 minutes."},                // M4 notification
+    {"Remind me to take a break", "Remind me to take a break in 30 minutes."},                // a notification while the app is closed
     {"Surprise me", "Surprise me with something fun about my console or my games."},          // open-ended
     {"A quick console check", "Give me a quick health check of my console: temperature, storage and uptime."},
     {"Something new to play", "Of the games I haven't played much, which should I try next?"},
@@ -620,7 +620,7 @@ void View::scroll(int items) {
 
 void View::drawBar(Canvas& c, bool focusable) {
   // Mic, then the message field with an underline. The mic lights up and pulses while voice is
-  // live (M6): red (kWarn) while listening to the DualSense mic, blue (kAccent) while transcribing.
+  // live: red (kWarn) while listening to the DualSense mic, blue (kAccent) while transcribing.
   const float r = 30;
   float mx = kChatX + r;
   const bool listening = voice_ == Voice::Listening;

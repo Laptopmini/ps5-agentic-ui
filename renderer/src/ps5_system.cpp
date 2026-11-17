@@ -360,7 +360,7 @@ nlohmann::json systemInfo(const std::string& storagePath) {
   struct statvfs fs {};
   if (statvfs(storagePath.c_str(), &fs) == 0 && fs.f_blocks > 0) {
     const unsigned long long unit = fs.f_frsize ? fs.f_frsize : fs.f_bsize;
-    // Used too, so the model doesn't do the arithmetic (MiniMax got "38% used" for 312 of 825 GB free).
+    // Used too, so the model doesn't do the arithmetic (a model got "38% used" for 312 of 825 GB free).
     const unsigned long long total = fs.f_blocks * unit, avail = fs.f_bavail * unit;
     out["storage"] = {{"totalGB", gb(total)}, {"usedGB", gb(total - std::min(total, avail))}, {"freeGB", gb(avail)}};
   }

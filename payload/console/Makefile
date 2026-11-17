@@ -1,4 +1,4 @@
-# M2 spike 2: the agent's screen on the console. The renderer's model/view and SDL canvas, built
+# The agent's screen on the console. The renderer's model/view and SDL canvas, built
 # for the PS5 with the ported SDL2: sample screens (renderer/fixtures), DualSense navigation and
 # the system keyboard. Online with agent.json next to it (scripts/ps5-play.sh), offline otherwise.
 PS5_HOST ?= ps5
@@ -15,7 +15,7 @@ ELF := console.elf
 SRCS := main.cpp ime.cpp sysui.cpp dualsense.cpp $(R)/src/model.cpp $(R)/src/view.cpp $(R)/src/session.cpp $(R)/src/haptics.cpp $(R)/src/canvas_geometry.cpp $(R)/src/canvas_sdl.cpp $(R)/src/canvas_gl.cpp $(R)/src/agent_client.cpp $(R)/src/channel_client.cpp $(R)/src/js_agent.cpp $(R)/src/ps5_system.cpp $(R)/src/ps5_voice.cpp $(R)/src/ps5_whisper.cpp $(R)/src/pairing.cpp $(R)/vendor/qrcodegen/qrcodegen.cpp
 CXXFLAGS := -std=c++20 -O2 -Wall -I$(PS5_SYSROOT)$(PS5_HBROOT)/include -I$(R)/include -I$(R)/vendor -I$(R)/src -Iggml/include $(shell $(PKG_CONFIG) --cflags sdl2 libcurl)
 
-# ggml + ggml-vulkan (+ whisper): on-console speech-to-text on the RADV GPU (finding 25, Track B).
+# ggml + ggml-vulkan (+ whisper): on-console speech-to-text on the RADV GPU (docs/voice.md).
 # Cross-built by scripts/ps5-ggml.sh into ggml/{lib,include}. The archives are mutually referential
 # (backend registry <-> base <-> cpu <-> vulkan), so link them as a group. ggml-vulkan dlopen()s
 # the RADV libvulkan.so.1 shipped next to the app (Vulkan-Hpp dynamic dispatch); -lvulkan satisfies

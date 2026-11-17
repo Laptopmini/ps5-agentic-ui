@@ -55,7 +55,7 @@ void Session::clear() {
 void Session::addUser(const std::string& text) {
   if (text.empty()) return;
   followUps_.clear();
-  transcript_.push_back({ChatLine::Role::User, text, ""});
+  transcript_.push_back({ChatLine::Role::User, text, "", ""});
   if (transcript_.size() > 200) transcript_.erase(transcript_.begin(), transcript_.begin() + 50);
 }
 
@@ -79,10 +79,10 @@ void Session::handle(const json& e) {
   } else if (type == "TEXT_MESSAGE_START") {
     // Several messages per run: the latest one is the one that goes with the screen.
     caption_.clear();
-    transcript_.push_back({ChatLine::Role::Assistant, "", ""});
+    transcript_.push_back({ChatLine::Role::Assistant, "", "", ""});
   } else if (type == "TEXT_MESSAGE_CONTENT") {
     if (transcript_.empty() || transcript_.back().role != ChatLine::Role::Assistant || transcript_.size() <= runStart_)
-      transcript_.push_back({ChatLine::Role::Assistant, "", ""});
+      transcript_.push_back({ChatLine::Role::Assistant, "", "", ""});
     transcript_.back().text += e.value("delta", "");
     caption_ = transcript_.back().text;
   } else if (type == "ACTIVITY_SNAPSHOT" && e.value("activityType", "") == "generative-ui-function-call") {

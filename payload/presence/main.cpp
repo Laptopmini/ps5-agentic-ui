@@ -1,4 +1,4 @@
-// PS5 A2UI's background presence (M4). A payload with no window, sent to the ELF loader
+// PS5 A2UI's background presence (docs/channel.md). A payload with no window, sent to the ELF loader
 // (:9021) so it stays resident while the player is in a game: by the app when its agent is a
 // channel, by scripts/ps5-channel.sh (PRESENCE=1), or at boot by a payload autoloader. It holds the channel's
 // event stream as the console's "presence" (channel/adapter.ts, role=presence). While the app

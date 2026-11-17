@@ -1,6 +1,5 @@
 {
   "_source": {
-    "model": "hand-authored",
     "scenario": "stats",
     "tool": "show_stats",
     "args": {

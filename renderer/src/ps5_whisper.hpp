@@ -1,4 +1,4 @@
-// On-console speech-to-text (M6, finding 25 Track B). Wraps whisper.cpp running on the PS5 GPU
+// On-console speech-to-text (docs/voice.md). Wraps whisper.cpp running on the PS5 GPU
 // through ggml-vulkan (the stock SDK RADV). Given 16 kHz mono PCM from the DualSense mic
 // (ps5_voice), returns the transcript. The model (ggml-base.en.bin) sits next to the app.
 //

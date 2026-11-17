@@ -793,13 +793,15 @@ int pushKey(int port, const std::string& consolePkB64, const json& message) {
 
 void testPairing() {
   // Credentials: checked fields, defaults per provider, what the runtime gets.
-  CHECK(!Credentials::fromJson(json{{"provider", "minimax"}, {"key", "has space"}}));
+  CHECK(!Credentials::fromJson(json{{"provider", "openrouter"}, {"key", "has space"}, {"model", "m"}}));
   CHECK(!Credentials::fromJson(json{{"provider", "other"}, {"key", "k"}}));
   CHECK(!Credentials::fromJson(json{{"provider", "server"}, {"key", "k"}, {"url", "ftp://x"}}));
-  auto or_ = Credentials::fromJson(json{{"provider", "openrouter"}, {"key", "sk-or-1"}});
-  CHECK(or_ && or_->modelOrDefault() == "minimax/minimax-m3" && or_->env().at("LLM_BASE_URL") == "https://openrouter.ai/api/v1" && or_->env().at("LLM_API_KEY") == "sk-or-1");
-  auto mm = Credentials::fromJson(json{{"provider", "minimax"}, {"key", "mm-1"}});
-  CHECK(mm && mm->modelOrDefault() == "MiniMax-M3" && mm->env().at("LLM_BASE_URL") == "https://api.minimax.io/v1" && mm->env().at("LLM_API_KEY") == "mm-1");
+  CHECK(!Credentials::fromJson(json{{"provider", "openrouter"}, {"key", "sk-or-1"}}));  // a model key needs a model id
+  auto or_ = Credentials::fromJson(json{{"provider", "openrouter"}, {"key", "sk-or-1"}, {"model", "vendor/model"}});
+  CHECK(or_ && or_->model == "vendor/model" && or_->label() == "OpenRouter" && or_->env().at("LLM_BASE_URL") == "https://openrouter.ai/api/v1" && or_->env().at("LLM_API_KEY") == "sk-or-1");
+  CHECK(!Credentials::fromJson(json{{"provider", "custom"}, {"key", "k-1"}, {"model", "m"}}));  // needs the endpoint
+  auto own = Credentials::fromJson(json{{"provider", "custom"}, {"key", "k-1"}, {"model", "m"}, {"url", "http://192.168.0.2:1234/v1"}});
+  CHECK(own && own->label() == "192.168.0.2:1234" && own->env().at("LLM_BASE_URL") == "http://192.168.0.2:1234/v1" && own->env().at("LLM_API_KEY") == "k-1");
   auto srv = Credentials::fromJson(json{{"provider", "server"}, {"key", "token"}, {"url", "http://192.168.0.2:8790/agent"}});
   CHECK(srv && srv->label() == "192.168.0.2:8790" && srv->env().empty());
   CHECK(base64Encode(reinterpret_cast<const unsigned char*>("hello!?"), 7) == "aGVsbG8hPw==" && *base64Decode("aGVsbG8hPw==") == "hello!?");
@@ -811,7 +813,7 @@ void testPairing() {
   Pairing pairing(po);
   const std::string code = pairing.code(), pk = pairing.publicKey();
   CHECK(code.size() == 6 && code.find_first_not_of("0123456789") == std::string::npos);
-  json good = {{"code", code}, {"provider", "minimax"}, {"key", "mm-key"}, {"model", ""}, {"url", ""}};
+  json good = {{"code", code}, {"provider", "openrouter"}, {"key", "or-key"}, {"model", "vendor/model"}, {"url", ""}};
   json wrong = good;
   wrong["code"] = code == "000000" ? "111111" : "000000";
   CHECK(pushKey(po.port, pk, wrong) == 403 && pairing.status().find("4 tries left") != std::string::npos);
@@ -826,7 +828,7 @@ void testPairing() {
   good["code"] = pairing.code();
   CHECK(pushKey(po.port, pairing.publicKey(), good) == 200);
   auto creds = pairing.poll();
-  CHECK(creds && creds->provider == "minimax" && creds->key == "mm-key");
+  CHECK(creds && creds->provider == "openrouter" && creds->key == "or-key" && creds->model == "vendor/model");
   // One key per session: the server has stopped.
   std::this_thread::sleep_for(std::chrono::milliseconds(300));
   CHECK(pushKey(po.port, pairing.publicKey(), good) == -1);
@@ -834,7 +836,7 @@ void testPairing() {
   const std::string path = "pairing-test-credentials.json";
   CHECK(creds->save(path));
   auto loaded = Credentials::load(path);
-  CHECK(loaded && loaded->key == "mm-key");
+  CHECK(loaded && loaded->key == "or-key");
   unlink(path.c_str());
 }
 
